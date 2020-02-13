@@ -28,8 +28,8 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-window.addEventListener("message", function(event) {
-    if (event.from == 'paradox' && event.type == 'paradoxCORSEvent') {
+window.addEventListener("message", function(message) {
+    if (message.data.from == 'paradox' && message.data.type == 'paradoxCORSEvent') {
         readCORS(event.data);
     }
 });
@@ -84,5 +84,45 @@ function readCORS(CORS) {
         //count['ads'] = count['ads'] + data.match(re).length;
     });
 
-    console.log('Number of Ad trackers: ' + count['ads']);
+    //console.log('Number of Ad trackers: ' + count['ads']);
+}
+
+readPrivacyPolicy();
+var policyWait
+function readPrivacyPolicy() {
+    if(createPolicyJFrame(findPrivacyPolicy())) {
+        policyWait = setInterval(waitForPolicy, 50);
+    }
+}
+
+function waitForPolicy() {
+    try {
+        var policyBody = document.getElementById('paradox-policy').import.querySelector('body');
+    } catch (exception) {
+        //Policy hasn't loaded yet.
+    }
+
+    if (policyBody !== null) {
+        clearInterval(policyWait);
+        parsePolicy(policyBody);
+    }
+}
+
+function parsePolicy(policy) {
+    console.log(policy);
+}
+
+function findPrivacyPolicy() {
+    return $('a[href*="privacy"]').attr('href');
+}
+
+function createPolicyJFrame(link) {
+
+    if (link.length > 0) {
+        $("#paradox-policy").load(link);
+
+        return true;
+    } else {
+        return false;
+    }
 }
