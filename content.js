@@ -1,6 +1,6 @@
-const cookies = getCookies();
-const storage = getLocalStorage();
-const cors = [];
+var cors = [];
+let cookies;
+let storage;
 const s = document.createElement('script');
 
 //Run on extension click
@@ -27,6 +27,16 @@ chrome.runtime.onMessage.addListener(
         }
     }
 );
+
+getData();
+
+function getData() {
+    cookies = getCookies();
+    storage = getLocalStorage();
+
+    updatePopup();
+
+}
 
 window.addEventListener("message", function(message) {
     if (message.data.from == 'paradox' && message.data.type == 'paradoxCORSEvent') {
@@ -72,19 +82,18 @@ function readCORS(CORS) {
 
     cors.push(data);
 
-    var adsFilter = ['ad', 'ads', 'adverts', 'advert', 'advertising'];
+   updatePopup();
+}
 
-    var count = {};
-
-    if (count['ads'] == undefined) {
-        count['ads'] = 0;
-    }
-    $(adsFilter).each(function() {
-        var re = new RegExp(this, 'g');
-        //count['ads'] = count['ads'] + data.match(re).length;
+function updatePopup() {
+    chrome.runtime.sendMessage({
+        msg: "data_update",
+        data: {
+            cookies: cookies,
+            storage: storage,
+            cors: cors
+        }
     });
-
-    //console.log('Number of Ad trackers: ' + count['ads']);
 }
 
 readPrivacyPolicy();
@@ -92,6 +101,8 @@ var policyWait
 function readPrivacyPolicy() {
     if(createPolicyJFrame(findPrivacyPolicy())) {
         policyWait = setInterval(waitForPolicy, 50);
+    } else {
+        console.log("Paradox could not find a Privacy Policy for this website");
     }
 }
 
@@ -117,10 +128,8 @@ function findPrivacyPolicy() {
 }
 
 function createPolicyJFrame(link) {
-
-    if (link.length > 0) {
-        $("#paradox-policy").load(link);
-
+    if (link !== undefined && link.length > 0) {
+        $("head").append('<link rel="import" id="paradox-policy" href="'+link+'">');
         return true;
     } else {
         return false;
