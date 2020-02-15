@@ -1,7 +1,8 @@
-var result = {ads:{},adblock:{},trackers:{},location:{},fingerprint:{}};
+var result = {ads:{},adblock:{},trackers:{},location:{},fingerprint:{},session:{}};
 const adsList = ['advert','advertisement','session'];
 const adblockList = ['adblock','adblk'];
 const locationList = ['location'];
+const sessionList = ['session'];
 const fingerprintList = ['fingerprint','browserwidth','browserheight','screenwidth','screenheight','wd=','user'];
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -67,6 +68,7 @@ function performDataChecks(type, data) {
     result.adblock[type] = checkForMatch(data, adblockList);
     result.location[type] = checkForMatch(data, locationList);
     result.fingerprint[type] = checkForMatch(data, fingerprintList);
+    result.session[type] = checkForMatch(data, sessionList);
 }
 
 function checkForMatch(data, wordList) {
@@ -87,18 +89,14 @@ function checkForMatch(data, wordList) {
 }
 
 function analyseResults() {
-    var types = ['ads','adblock','location','fingerprint'];
+    var types = ['ads','adblock','location','fingerprint','session'];
 
     $(types).each(function() {
         if (result[this].cookies == true || result[this].cors == true|| result[this].storage == true) {
-            $('#'+this+'-icon').css('background-color','#e53935');
+            $('#'+this+'-icon .result').css('background-color','#e53935');
         } else {
-            $('#'+this+'-icon').css('background-color','#43A047');
+            $('#'+this+'-icon .result').css('background-color','#43A047');
         }
     });
-
-
-
-
 }
 
