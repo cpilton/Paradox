@@ -103,8 +103,27 @@ var result = {};
 const searchList = {
     cookies: ['use cookies', 'unique identifiers'],
     directDataCollection: ['information you give us', 'information you provide'],
-    automaticDataCollecion: ['automatically receive and store certain types of information'],
-    externalDataCollection: ['information about you from other sources']
+    automaticDataCollection: ['automatically receive and store certain types of information'],
+    externalDataCollection: ['information about you from other sources'],
+    usabilityTracking: ['provide functionality','analyse performance','fix errors','improve usability'],
+    recommendations: ['recommend features','recommend products', 'recommend services', 'personalise your experience'],
+    voiceTracking: ['process your voice'],
+    communication: ['communicate with you'],
+    advertising: ['advertising',' interest-based ads',' interest-based advertisements'],
+    uncategorisedData: ['process your personal information for a specific purpose'],
+    thirdPartySharing: ['share the information','shared with third parties','provided by third parties', 'third party is involved in your transactions','share customer information related to those transactions with that third party','other companies','other individuals','other companies and individuals','third-party service providers have access to personal information'],
+    businessSharing: ['we might sell or buy'],
+    dataRelease: ['we release account','we release personal','exchanging information'],
+    dataSecurity: ['ssl','protect the security','pci dss','security procedures','security features'],
+    thirdPartyAdvertising: ['third-party advertising','third party advertising partners'],
+    informationRequest: ['can access your information','access your personal','information request','right to request access'],
+    rejectDataCollection: ['you can choose not to provide','withdraw your consent','able to opt out','object to our processing of your personal data'],
+    rejectDataCollectionConsequence: ['not be able to take advantage','not be able to add items to your shopping basket'],
+    dataCollection: ['keep a copy of the previous version','our records'],
+    dataRetention: ['keep your personal','as long as it is required'],
+    dataTypes: ['search results','contacts','images','videos','files','name','address','phone number','payment information','age','location','friends','other people','voice recordings','documents','financial information','credit history','vat number','device log file','wi-fi credentials','internet protocol','ip address','password','device metrics','connectivity data','searched for','browsing','interactions with products','internet-connected devices'],
+    analytics: ['page response times','download errors','length of visit','page interaction','scrolling','clicks','mouse-overs']
+
 };
 
 //Format the policy
@@ -136,6 +155,10 @@ function parsePolicy(policy) {
         result[this] = checkForMatch(policy, searchList[this]);
     });
 
+    //Find email addresses in privacy policy
+    var email = policy.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
+
+    console.log(email);
     console.log(result);
 }
 
@@ -147,7 +170,7 @@ function findPrivacyPolicy() {
 //Get the policy as a string
 function getPolicy(link) {
     if (link !== undefined) {
-
+        console.log('Paradox is loading the Privacy Policy from: ' + link);
         var privacyPolicy;
 
         //get the privacy policy using a JQuery GET request
