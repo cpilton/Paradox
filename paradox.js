@@ -59,7 +59,6 @@
 
 
                     if (this.responseText) {
-                        console.log(this.responseText);
                         try {
                             responseModel['body'] = _.JSONDecode(this.responseText);
                         } catch(err) {

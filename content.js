@@ -38,7 +38,7 @@ function getData() {
 
 }
 
-window.addEventListener("message", function(message) {
+window.addEventListener("message", function (message) {
     if (message.data.from == 'paradox' && message.data.type == 'paradoxCORSEvent') {
         readCORS(event.data);
     }
@@ -82,9 +82,10 @@ function readCORS(CORS) {
 
     cors.push(data);
 
-   updatePopup();
+    updatePopup();
 }
 
+//Send updates to popup
 function updatePopup() {
     chrome.runtime.sendMessage({
         msg: "data_update",
@@ -96,42 +97,90 @@ function updatePopup() {
     });
 }
 
-readPrivacyPolicy();
-var policyWait
-function readPrivacyPolicy() {
-    if(createPolicyJFrame(findPrivacyPolicy())) {
-        policyWait = setInterval(waitForPolicy, 50);
-    } else {
-        console.log("Paradox could not find a Privacy Policy for this website");
-    }
-}
+getPolicy(findPrivacyPolicy())
 
-function waitForPolicy() {
-    try {
-        var policyBody = document.getElementById('paradox-policy').import.querySelector('body');
-    } catch (exception) {
-        //Policy hasn't loaded yet.
-    }
+var result = {};
+const searchList = {
+    cookies: ['use cookies', 'unique identifiers'],
+    directDataCollection: ['information you give us', 'information you provide'],
+    automaticDataCollecion: ['automatically receive and store certain types of information'],
+    externalDataCollection: ['information about you from other sources']
+};
 
-    if (policyBody !== null) {
-        clearInterval(policyWait);
-        parsePolicy(policyBody);
-    }
-}
-
+//Format the policy
 function parsePolicy(policy) {
-    console.log(policy);
+    //Regex for scripts, images, comments, and blank lines
+    var regex = [/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, /(<!--.*?-->)|(<!--[\S\s]+?-->)|(<!--[\S\s]*?$)/g, /^\s*$(?:\r\n?|\n)/gm];
+
+    //Remove unwanted text
+    $(regex).each(function () {
+        while (this.test(policy)) {
+            policy = policy.replace(this, "");
+        }
+    });
+
+    //Convert to lowercase for comparison
+    policy = policy.toLowerCase();
+
+    var searchTerms = [];
+
+    //Loop through searchList keys to create key-set
+    for (var key in searchList) {
+        if (searchList.hasOwnProperty(key)) {
+            searchTerms.push(key);
+        }
+    }
+
+    //Loop through key-set, run checkForMatch function on each
+    $(searchTerms).each(function () {
+        result[this] = checkForMatch(policy, searchList[this]);
+    });
+
+    console.log(result);
 }
 
+//Find a link to the privacy policy on the website
 function findPrivacyPolicy() {
     return $('a[href*="privacy"]').attr('href');
 }
 
-function createPolicyJFrame(link) {
-    if (link !== undefined && link.length > 0) {
-        $("head").append('<link rel="import" id="paradox-policy" href="'+link+'">');
-        return true;
+//Get the policy as a string
+function getPolicy(link) {
+    if (link !== undefined) {
+
+        var privacyPolicy;
+
+        //get the privacy policy using a JQuery GET request
+        $.get(link, function (data) {
+            privacyPolicy = data;
+        })
+            .done(function () {
+                parsePolicy(privacyPolicy);
+            })
+            .fail(function () {
+                console.log('Paradox failed to get the Privacy Policy for this Website');
+            });
     } else {
-        return false;
+        console.log('Paradox failed to find a Privacy Policy for this Website.');
+    }
+}
+
+//Check the privacy policy for pre-defined strings
+function checkForMatch(dataString, wordList) {
+    var count = 0;
+    var matches = [];
+
+    //Check the policy for a string, and if found increase counter and push string to matches
+    $(wordList).each(function () {
+        if (dataString.search(this) != -1) {
+            matches.push(this);
+            count++;
+        }
+    });
+
+    if (count == 0) {
+        return {match: false};
+    } else {
+        return {match: true, data: matches};
     }
 }
