@@ -28,6 +28,8 @@
   },
   "web_accessible_resources": [
     "paradox.js",
-    "public/img/logo.png"
+    "public/img/logo.png",
+    "public/img/tick.svg",
+    "public/img/warning.svg"
   ]
 }

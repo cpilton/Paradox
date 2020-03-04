@@ -153,10 +153,49 @@ function appendPolicyToButton(button) {
 
     var content = document.createElement("div");
     content.id = "paradox-popup-content";
-    content.textContent = JSON.stringify(paradoxPolicy);
+    //content.textContent = JSON.stringify(paradoxPolicy);
 
     var arrow = document.createElement("div");
     arrow.id = "paradox-popup-arrow";
+
+    var top = document.createElement("div");
+    top.id = "paradox-popup-top";
+    top.textContent ="Paradox Policy Analysis";
+
+    var containers = ["data-collection", "your-choices", "data-usage", "tracking"];
+
+    containers.forEach((element) => {
+        var container = document.createElement("div");
+        container.className = "popup-container";
+        container.id = element + '-container';
+
+        var title = document.createElement("div");
+        title.id = element + '-title';
+        title.className = "popup-container-titles";
+
+        var img = document.createElement("div");
+        img.id = element + '-img';
+        img.className = "popup-container-img";
+
+        img.style.backgroundImage = 'url("' + tickImage + '")';
+        img.style.backgroundColor = '#43A047';
+
+        var text = document.createElement("div");
+        text.className = "popup-container-text";
+        text.id = element + '-text';
+
+        var list = document.createElement("ul");
+        list.className = "popup-container-list";
+        list.id = element + '-list';
+
+        title.textContent = element.replace('-', ' ');
+
+        text.appendChild(list);
+        title.appendChild(img);
+        container.appendChild(title);
+        container.appendChild(text);
+        content.appendChild(container);
+    });
 
     var icon;
 
@@ -169,8 +208,9 @@ function appendPolicyToButton(button) {
     icon.style.height = existingStyles.height;
     icon.style.top = '-' + (parseInt(existingStyles.height) + parseInt(existingStyles.marginBottom)) + 'px';
 
-    popup.appendChild(arrow);
     popup.appendChild(content);
+    popup.appendChild(arrow);
+    popup.appendChild(top);
     logo.appendChild(popup);
     icon.appendChild(logo);
     container.appendChild(icon);
@@ -182,10 +222,12 @@ function appendPolicyToButton(button) {
     }
 
     parent.appendChild(container);
+
+    updatePopup();
 }
 
 var paradoxPolicy;
-var logoImage;
+var logoImage, tickImage, warningImage;
 
 window.postMessage({from: 'paradox', type: 'policyRequest'}, "*");
 
@@ -194,6 +236,56 @@ window.addEventListener("message", function (message) {
         paradoxPolicy = message.data.policy;
         console.log(paradoxPolicy);
         logoImage = message.data.icon;
+        tickImage = message.data.tickImg;
+        warningImage = message.data.warningImg;
         checkForRegisterButton();
     }
 });
+
+function updatePopup() {
+    var img, liAppend;
+    var li = document.createElement("li");
+
+    img = document.getElementById('data-collection-img');
+    liAppend = document.getElementById('data-collection-list');
+    if (paradoxPolicy.dataTypes.match) {
+        img.style.backgroundImage = 'url("' + warningImage + '")';
+        img.style.backgroundColor = '#FB8C00';
+
+        li.textContent = "Your personal information will be collected: "
+    } else {
+        img.style.backgroundImage = 'url("' + tickImage + '")';
+        img.style.backgroundColor = '#43A047';
+
+        li.textContent = "Your personal information will not being collected."
+    }
+    liAppend.appendChild(li);
+
+
+    img = document.getElementById('your-choices-img');
+    if (!paradoxPolicy.informationRequest.match || !paradoxPolicy.rejectDataCollection.match) {
+        img.style.backgroundImage = 'url("' + warningImage + '")';
+        img.style.backgroundColor = '#FB8C00';
+    } else {
+        img.style.backgroundImage = 'url("' + tickImage + '")';
+        img.style.backgroundColor = '#43A047';
+    }
+
+    img = document.getElementById('data-usage-img');
+    if (paradoxPolicy.thirdPartySharing.match || paradoxPolicy.recommendations.match || paradoxPolicy.dataSecurity.match) {
+        img.style.backgroundImage = 'url("' + warningImage + '")';
+        img.style.backgroundColor = '#FB8C00';
+    } else {
+        img.style.backgroundImage = 'url("' + tickImage + '")';
+        img.style.backgroundColor = '#43A047';
+    }
+
+    img = document.getElementById('tracking-img');
+    if (paradoxPolicy.usabilityTracking.match || paradoxPolicy.advertising.match || paradoxPolicy.analytics.match || paradoxPolicy.cookies.match) {
+        img.style.backgroundImage = 'url("' + warningImage + '")';
+        img.style.backgroundColor = '#FB8C00';
+    } else {
+        img.style.backgroundImage = 'url("' + tickImage + '")';
+        img.style.backgroundColor = '#43A047';
+    }
+}

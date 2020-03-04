@@ -48,7 +48,9 @@ window.addEventListener("message", function (message) {
             from: 'content',
             type: 'paradoxPolicy',
             policy: policyResult,
-            icon: chrome.extension.getURL("/public/img/logo.png")
+            icon: chrome.extension.getURL("/public/img/logo.png"),
+            tickImg: chrome.extension.getURL("/public/img/tick.svg"),
+            warningImg: chrome.extension.getURL("/public/img/warning.svg")
         }, "*");
     }
 });
@@ -167,7 +169,9 @@ function parsePolicy(policy) {
 
 //Find a link to the privacy policy on the website
 function findPrivacyPolicy() {
-    return $('a[href*="privacy"]').attr('href');
+    var url = $('a[href*="privacy"]').attr('href');
+    //url = url.replace(/^.*\/\/[^\/]+/, '');
+    return url;
 }
 
 //Get the policy as a string
@@ -178,17 +182,17 @@ function getPolicy(link) {
 
         //get the privacy policy using a JQuery GET request
         $.get(link, function (data) {
-            privacyPolicy = data;
-        })
-            .done(function () {
+            if (data !== undefined && data !== null && data !== "") {
+                console.log(data);
+                privacyPolicy = data;
                 parsePolicy(privacyPolicy);
-            })
-            .fail(function () {
-                console.log('Paradox failed to get the Privacy Policy for this Website');
+            } else {
+                console.log('The website blocked access to the Privacy Policy');
                 injectScript();
-            });
+            }
+        });
     } else {
-        console.log('Paradox failed to find a Privacy Policy for this Website.');
+        console.log('Paradox failed to find a Privacy Policy for this Website');
         injectScript();
     }
 }
