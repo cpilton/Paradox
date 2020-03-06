@@ -12,6 +12,7 @@
     position: relative;
     z-index: 100;
     cursor: default;
+    line-height: normal;
 }
 
 #paradox-popup-logo-container {
@@ -23,8 +24,8 @@
     visibility: hidden;
     position: absolute;
     z-index: 1;
-    bottom: 150%;
-    left: 50%;
+    bottom: 100%;
+    left: calc(50% + 4px);
     margin-left: -225px;
     opacity: 0;
     transition: visibility 0.2s linear, opacity 0.2s linear;
@@ -42,20 +43,19 @@
     position: absolute;
     top: 0;
     left: 0;
-    padding: 5px;
+    padding: 5px 1px 0 1px;
     border-radius: 10px;
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
     border: 1px solid #eee;
+    box-sizing: border-box;
 }
 
 #paradox-popup-logo #paradox-popup-arrow {
     position: absolute;
-    top: 100%;
-    left: 50%;
+    bottom: calc(0% + 4px);
+    left: calc(50% - 12px);
     width: 14px;
     height: 14px;
-    margin-left: -7px;
-    margin-top: -7px;
     border-right: 1px solid #eee;
     border-bottom: 1px solid #eee;
     background-color: #f9f9f9;
@@ -102,7 +102,7 @@
     text-align: center;
     padding: 5px;
     font-size: 14px;
-    background-color: #fafafa;
+    background-color: #efefef;
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.1);
     position: relative;
 }
@@ -120,19 +120,73 @@
     background-repeat: no-repeat;
 }
 .popup-container-text {
+    box-sizing: border-box;
     width: 100%;
     height: calc(100% - 28px);
     position: absolute;
     top:28px;
     left:0px;
     padding: 5px;
+    overflow-x: hidden;
     overflow-y: auto;
-    overflow-y: hidden;
 }
 .popup-container-list {
-    list-style-type: disc;
     color: #000;
     text-align: left;
     font-size: 12px;
-    padding: unset;
+    padding: 0;
+    margin: 0;
+    line-height: normal;
+}
+.popup-li-small {
+    font-size: 10px;
+    color: #777;
+}
+.popup-li-big {
+    font-size: 11px;
+    color: #444;
+}
+.popup-container-list li {
+    padding-left: 15px;
+    position: relative;
+    list-style: none;
+}
+.popup-container-list li div {
+    position: absolute;
+    left:0;
+    top:1.5px;
+    border-radius: 100%;
+    background-size: 60%;
+    background-position: center;
+    background-repeat: no-repeat;
+    width:10px;
+    height: 10px;
+}
+
+/* width */
+.popup-container ::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* Track */
+.popup-container ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+.popup-container ::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+.popup-container ::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}
+#popup-container-noPolicy {
+    font-size: 18px;
+    position: absolute;
+    top:50%;
+    transform: translateY(-50%);
+    width: 90%;
+    left:5%;
 }

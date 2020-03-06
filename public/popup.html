@@ -10,39 +10,55 @@
 <div id="banner"></div>
 <div id="container">
     <div class="topic-container">
-        <div class="counter-box">
-            <div class="text">CORS</div>
-            <div class="tooltip">?<span class="tooltiptext left-edge">Cross Origin Resource Sharing</span></div>
-            <div class="counter" id="cors-value"></div>
+        <div class="topic-title">Tracking Data</div>
+        <div class="items" id="track">
+        <div id="session" class="tracker">
+            <div id="session-icon" class="result-icon"></div>
+            <div id="session-text" class="result-text"></div>
         </div>
-        <div class="counter-box">
-            <div class="text">Cookies</div>
-            <div class="tooltip">?<span class="tooltiptext">Tracking Cookies</span></div>
-            <div class="counter" id="tracking-cookies-value"></div>
+        <div id="ads" class="tracker">
+            <div id="ads-icon" class="result-icon"></div>
+            <div id="ads-text" class="result-text"></div>
         </div>
-        <div class="counter-box last">
-            <div class="text">Storage</div>
-            <div class="tooltip">?<span class="tooltiptext right-edge">Local Storage</span></div>
-            <div class="counter" id="local-storage-value"></div>
+        <div id="adblock" class="tracker">
+            <div id="adblock-icon" class="result-icon"></div>
+            <div id="adblock-text" class="result-text"></div>
         </div>
-        <div id="tracker-summary">
-            <div id="session-icon" class="result-icon">
-                <div class="result"></div>
+        <div id="location" class="tracker">
+            <div id="location-icon" class="result-icon"></div>
+            <div id="location-text" class="result-text"></div>
+        </div>
+        <div id="fingerprint" class="tracker">
+            <div id="fingerprint-icon" class="result-icon"></div>
+            <div id="fingerprint-text" class="result-text"></div>
+        </div>
+    </div>
+    </div>
+    <div class="topic-container">
+        <div class="topic-title">Privacy Policy Analysis</div>
+        <div class="items" id="policy">
+            <div id="data-collection" class="tracker">
+                <div id="data-collection-icon" class="result-icon"></div>
+                <div id="data-collection-text" class="result-text"></div>
             </div>
-            <div id="ads-icon" class="result-icon">
-                <div class="result"></div>
+            <div id="your-choices" class="tracker">
+                <div id="your-choices-icon" class="result-icon"></div>
+                <div id="your-choices-text" class="result-text"></div>
             </div>
-            <div id="adblock-icon" class="result-icon">
-                <div class="result"></div>
+            <div id="data-usage" class="tracker">
+                <div id="data-usage-icon" class="result-icon"></div>
+                <div id="data-usage-text" class="result-text"></div>
             </div>
-            <div id="location-icon" class="result-icon">
-                <div class="result"></div>
-            </div>
-            <div id="fingerprint-icon" class="result-icon">
-                <div class="result"></div>
+            <div id="tracking" class="tracker">
+                <div id="tracking-icon" class="result-icon"></div>
+                <div id="tracking-text" class="result-text"></div>
             </div>
         </div>
     </div>
-</div>
+    <div id="buttons">
+        <button id="full-report">Open Full Report</button>
+        <button id="report-violation">Report Violation</button>
+    </div>
+    </div>
 </body>
 </html>

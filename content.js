@@ -19,10 +19,12 @@ chrome.runtime.onMessage.addListener(
         }
         if ((request.from === 'popup') && (request.subject === 'DOMInfo')) {
             var domInfo = {
+                url: window.location.hostname,
                 cookies: cookies,
                 storage: storage,
                 cors: cors,
-                policy: policyResult
+                policy: policyResult,
+                type: 'load'
             };
             sendResponse(domInfo);
         }
@@ -103,10 +105,12 @@ function updatePopup() {
     chrome.runtime.sendMessage({
         msg: "data_update",
         data: {
+            url: window.location.hostname,
             cookies: cookies,
             storage: storage,
             cors: cors,
-            policy: policyResult
+            policy: policyResult,
+            type: 'update'
         }
     });
 }
@@ -170,7 +174,6 @@ function parsePolicy(policy) {
 //Find a link to the privacy policy on the website
 function findPrivacyPolicy() {
     var url = $('a[href*="privacy"]').attr('href');
-    //url = url.replace(/^.*\/\/[^\/]+/, '');
     return url;
 }
 
