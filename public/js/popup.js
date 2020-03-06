@@ -3,7 +3,8 @@ const adsList = ['advert', 'advertisement', 'session'];
 const adblockList = ['adblock', 'adblk'];
 const locationList = ['location'];
 const sessionList = ['session'];
-const fingerprintList = ['fingerprint', 'browserwidth', 'browserheight', 'screenwidth', 'screenheight', 'wd=', 'user'];
+const fingerprintList = ['analytic','fingerprint', 'browserwidth', 'browserheight', 'screenwidth', 'screenheight', 'wd=', 'user'];
+var violations = 0, violationJustification = [];
 
 window.addEventListener('DOMContentLoaded', () => {
     // ...query for the active tab...
@@ -45,7 +46,12 @@ function parseReponse(data) {
             performDataChecks('cors', data.cors);
         }
         analyseResults();
-        analysePolicy(data.policy);
+        if (Object.entries(data.policy).length !== 0) {
+            analysePolicy(data.policy);
+        } else {
+            $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing. If you can\'t find a Privacy Policy on this website, consider using the "Report Violation" button.</span></div>');
+            updateViolations('no policy');
+        }
     }
 }
 
@@ -85,31 +91,31 @@ function analyseResults() {
         }
     });
 
-    if (result.session.cookies == true || result.session.cors == true || result.session.storage == true) {
+    if (result.session.cookies || result.session.cors || result.session.storage) {
         $('#session-text').text('Session data is being used to recognise your device');
     } else {
         $('#session-text').text('Session data is not being collected');
     }
 
-    if (result.ads.cookies == true || result.ads.cors == true || result.ads.storage == true) {
+    if (result.ads.cookies || result.ads.cors || result.ads.storage) {
         $('#ads-text').text('Websites you visit are being logged to personalise your ads');
     } else {
         $('#ads-text').text('The website you visit are not being logged for advertising');
     }
 
-    if (result.adblock.cookies == true || result.adblock.cors == true || result.adblock.storage == true) {
+    if (result.adblock.cookies || result.adblock.cors || result.adblock.storage) {
         $('#adblock-text').text('Ad-block detection may be used to show you ads');
     } else {
         $('#adblock-text').text('Ad-block detection is not in use');
     }
 
-    if (result.location.cookies == true || result.location.cors == true || result.location.storage == true) {
+    if (result.location.cookies || result.location.cors || result.location.storage) {
         $('#location-text').text('Your location is being tracked');
     } else {
         $('#location-text').text('Your location is not being tracked');
     }
 
-    if (result.fingerprint.cookies == true || result.fingerprint.cors == true || result.fingerprint.storage == true) {
+    if (result.fingerprint.cookies || result.fingerprint.cors || result.fingerprint.storage) {
         $('#fingerprint-text').text('Fingerprinting is being used to recognise your device');
     } else {
         $('#fingerprint-text').text('Fingerprinting is not being used');
@@ -123,13 +129,38 @@ function analysePolicy(paradoxPolicy) {
     } else {
         $('#data-collection-text').text('Your personal information will not be collected');
         $('#data-collection-icon').addClass('tick');
+
+        if(result.location.cookies || result.location.cors || result.location.storage) {
+            const justification = 'location tracking despite claiming no personal information will be collected';
+            if (!violationJustification.includes(justification)) {
+               updateViolations(justification);
+           }
+        }
+        if(result.fingerprint.cookies || result.fingerprint.cors || result.fingerprint.storage) {
+            const justification = 'fingerprint tracking despite claiming no personal information will be collected';
+            if (!violationJustification.includes(justification)) {
+                updateViolations(justification);
+            }
+        }
     }
 
     if (!paradoxPolicy.informationRequest.match || !paradoxPolicy.rejectDataCollection.match || paradoxPolicy.rejectDataCollectionConsequence.match) {
         if (!paradoxPolicy.informationRequest.match) {
             $('#your-choices-text').text('The policy does not say you can request your information');
+
+                const justification = 'no method for data request provided';
+                if (!violationJustification.includes(justification)) {
+                    updateViolations(justification);
+                }
+
         } else if (!paradoxPolicy.rejectDataCollection.match) {
             $('#your-choices-text').text('You cannot reject data collection if you want to use this website');
+
+            const justification = 'no option to reject data collection provided';
+            if (!violationJustification.includes(justification)) {
+                updateViolations(justification);
+            }
+
         } else if (paradoxPolicy.rejectDataCollectionConsequence.match) {
             $('#your-choices-text').text('There are consequences to rejecting data collection');
         }
@@ -142,6 +173,12 @@ function analysePolicy(paradoxPolicy) {
     if (paradoxPolicy.thirdPartySharing.match || paradoxPolicy.recommendations.match || paradoxPolicy.dataSecurity.match) {
         if (paradoxPolicy.dataSecurity.match) {
             $('#data-usage-text').text('Your personal data may not be stored securely');
+
+            const justification = 'personal data security not mentioned';
+            if (!violationJustification.includes(justification)) {
+                updateViolations(justification);
+            }
+
         } else if (paradoxPolicy.thirdPartySharing.match) {
             $('#data-usage-text').text('Your data may be shared or sold to third-parties');
         } else if (paradoxPolicy.recommendations.match) {
@@ -165,7 +202,21 @@ function analysePolicy(paradoxPolicy) {
         }
         $('#tracking-icon').addClass('warning');
     } else {
-        $('#tracking-text').text('This website does track your usage, or personalise ads');
+        $('#tracking-text').text('This website doesn\'t track your usage, or personalise ads');
+
+        if(result.session.cookies || result.session.cors || result.session.storage) {
+            const justification = 'cookies used but not declared in privacy policy';
+            if (!violationJustification.includes(justification)) {
+                updateViolations(justification);
+            }
+        }
+        if(result.fingerprint.cookies || result.fingerprint.cors || result.fingerprint.storage) {
+            const justification = 'analytics used but not declared in privacy policy';
+            if (!violationJustification.includes(justification)) {
+                updateViolations(justification);
+            }
+        }
+
         $('#tracking-icon').addClass('tick');
     }
 }
@@ -177,4 +228,13 @@ $('#full-report').click(function() {
 $('#report-violation').click(function() {
 
 });
+
+function updateViolations(justification) {
+    violations++;
+    violationJustification.push(justification);
+
+    $('#report-violation').addClass('with-icon');
+    $('#violation-count').css('visibility','visible');
+    $('#violation-count').text(violations.toString());
+}
 
