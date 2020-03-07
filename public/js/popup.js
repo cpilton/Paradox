@@ -170,8 +170,8 @@ function analysePolicy(paradoxPolicy) {
         $('#your-choices-icon').addClass('tick');
     }
 
-    if (paradoxPolicy.thirdPartySharing.match || paradoxPolicy.recommendations.match || paradoxPolicy.dataSecurity.match) {
-        if (paradoxPolicy.dataSecurity.match) {
+    if (paradoxPolicy.thirdPartySharing.match || paradoxPolicy.recommendations.match || !paradoxPolicy.dataSecurity.match) {
+        if (!paradoxPolicy.dataSecurity.match) {
             $('#data-usage-text').text('Your personal data may not be stored securely');
 
             const justification = 'personal data security not mentioned';

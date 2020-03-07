@@ -121,21 +121,21 @@ function updatePopup() {
 getPolicy(findPrivacyPolicy())
 
 const searchList = {
-    cookies: ['use cookies', 'unique identifiers', 'cookies stored on your device'],
-    directDataCollection: ['face recognition technology', 'information you give us', 'information you provide', 'content you provide'],
+    cookies: ['use cookies', 'unique identifiers', 'cookies stored on your device','collect information about you via cookie','session cookies','persistent cookies','third-party cookies'],
+    directDataCollection: ['face recognition technology', 'information you give us', 'information you provide', 'content you provide','When you are asked to fill in a form '],
     externalDataCollection: ['partners provide information about your activities', 'advertisers, app developers and publishers can send us information', 'information about you from other sources', 'information that other people provide'],
     usabilityTracking: ['improve our products', 'provide functionality', 'analyse performance', 'fix errors', 'improve usability'],
     recommendations: ['give you tips', 'recommend features', 'recommend products', 'recommend services', 'personalise your experience', 'make suggestions for you'],
-    advertising: ['personalise ads', 'sponsored content', 'we choose the ads that you see', 'third-party advertising', 'third party advertising partners', 'advertising', ' interest-based ads', ' interest-based advertisements'],
-    thirdPartySharing: ['we share information about you', 'sharing with third-party partners', 'we might sell or buy', 'share the information', 'shared with third parties', 'provided by third parties', 'third party is involved in your transactions', 'share customer information related to those transactions with that third party', 'other companies', 'other individuals', 'other companies and individuals', 'third-party service providers have access to personal information'],
+    advertising: ['Display Advertising','personalise ads', 'sponsored content', 'we choose the ads that you see', 'third-party advertising', 'third party advertising partners', 'advertising', ' interest-based ads', ' interest-based advertisements'],
+    thirdPartySharing: ['remarketing and other advertising services and features','we share information about you', 'sharing with third-party partners', 'we might sell or buy', 'share the information', 'shared with third parties', 'provided by third parties', 'third party is involved in your transactions', 'share customer information related to those transactions with that third party', 'other companies', 'other individuals', 'other companies and individuals', 'third-party service providers have access to personal information'],
     dataRelease: ['we release account', 'we release personal', 'exchanging information'],
-    dataSecurity: ['ssl', 'protect the security', 'pci dss', 'security procedures', 'security features'],
-    informationRequest: ['you have the right to access', 'can access your information', 'access your personal', 'information request', 'right to request access'],
-    rejectDataCollection: ['right to object', 'you can choose not to provide', 'withdraw your consent', 'able to opt out', 'object to our processing of your personal data'],
-    rejectDataCollectionConsequence: ['not be able to take advantage', 'not be able to add items to your shopping basket'],
+    dataSecurity: ['SSL', 'protect the security', 'PCI DSS', 'security procedures', 'security features', 'security safeguards', 'incident response', 'SSH', 'TLS','committed to keeping your information secure'],
+    informationRequest: ['you have the right to access', 'can access your information', 'access your personal', 'information request', 'right to request access','right to ask for information','subject access rights','you can ask us to provide you with the personal information we hold about you'],
+    rejectDataCollection: ['can opt-out','you can disable cookies','right to object', 'you can choose not to provide', 'withdraw your consent', 'able to opt out', 'object to our processing of your personal data'],
+    rejectDataCollectionConsequence: ['some parts of our website might not work properly for you','not be able to take advantage', 'not be able to add items to your shopping basket'],
     dataRetention: ['we store data until it is no longer necessary', 'until your account is deleted', 'keep a copy of the previous version', 'keep your personal', 'as long as it is required'],
-    dataTypes: ['search results', 'address book', 'call log', 'sms log', 'contacts', 'images', 'videos', 'files', 'name', 'address', 'phone number', 'payment information', 'age', 'location', 'friends', 'religious views', 'political views', 'your health', 'ethnic origin', 'philosophical beliefs', 'people', 'voice recordings', 'documents', 'financial information', 'credit history', 'vat number', 'device log file', 'wi-fi credentials', 'internet protocol', 'ip address', 'password', 'device metrics', 'connectivity data', 'searched for', 'browsing', 'interactions with products', 'internet-connected devices', 'card number', 'operating system', 'battery level', 'storage space', 'browser type', 'bluetooth signals', 'nearby wi-fi', 'name of your mobile operator', 'mobile phone number', 'other devices that are nearby or on your network', 'websites you visit', 'purchases you make', 'ads you see', 'games you play', 'where you live', 'places you like to go', 'businesses and people you\'re near'],
-    analytics: ['how you use features', 'time, frequency and duration of your activities', 'accounts you interact with', 'actions you take', 'features you use', 'content that you view', 'how you use our products', 'how you interact', 'page response times', 'download errors', 'length of visit', 'page interaction', 'scrolling', 'clicks', 'mouse-overs', 'mouse movements']
+    dataTypes: ['gender','qualifications','dietary requirements','search results', 'address book', 'call log', 'SMS log', 'contacts', 'images', 'videos', 'files', 'name', 'email address', 'phone number', 'payment information', 'user agent', 'location', 'friends', 'religious views', 'political views', 'your health', 'ethnic origin', 'philosophical beliefs', 'people', 'voice recordings', 'documents', 'financial information', 'credit history', 'VAT number', 'device log file', 'Wi-Fi credentials', 'internet protocol', 'IP address', 'password', 'device metrics', 'connectivity data', 'searched for', 'browsing', 'interactions with products', 'internet-connected devices', 'card number', 'operating system', 'battery level', 'storage space', 'browser type', 'bluetooth signals', 'nearby Wi-Fi', 'name of your mobile operator', 'mobile phone number', 'other devices that are nearby or on your network', 'websites you visit', 'purchases you make', 'ads you see', 'games you play', 'where you live', 'places you like to go', 'businesses and people you\'re near'],
+    analytics: ['Google Analytics','links they interact with','how website visitors have interacted with web pages','how you use features', 'time, frequency and duration of your activities', 'accounts you interact with', 'actions you take', 'features you use', 'content that you view', 'how you use our products', 'how you interact', 'page response times', 'download errors', 'length of visit', 'page interaction', 'scrolling', 'clicks', 'mouse-overs', 'mouse movements']
 };
 
 //Format the policy
@@ -178,9 +178,20 @@ function parsePolicy(policy) {
 function findPrivacyPolicy() {
     var url;
 
+    var multipleURLs = false;
+
     $('a').each(function() {
         if ($(this).attr('href') !== undefined && $(this).attr('href').toLowerCase().indexOf('privacy') !== -1 &&  $(this).text().toLowerCase().indexOf('privacy') !== -1) {
-            url = $(this).attr('href');
+            if(!multipleURLs) {
+                url = $(this).attr('href');
+                multipleURLs = true;
+            } else {
+                if ($(this).text().toLowerCase().indexOf('privacy policy') !== -1 || $(this).text().toLowerCase().indexOf('privacy notice') !== -1) {
+                    if ($(this).attr('href').length < url) {
+                        url = $(this).attr('href');
+                    }
+                }
+            }
         }
     });
 
@@ -237,7 +248,7 @@ function checkForMatch(dataString, wordList) {
 
     //Check the policy for a string, and if found increase counter and push string to matches
     $(wordList).each(function () {
-        if (dataString.search(this) != -1) {
+        if (dataString.search(this.toLowerCase()) != -1) {
             matches.push(this);
             count++;
         }
