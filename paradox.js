@@ -567,4 +567,5 @@ function updatePopup() {
         li.appendChild(bp);
         liAppend.appendChild(li);
     }
+
 }

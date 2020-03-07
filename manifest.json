@@ -24,6 +24,9 @@
     "persistent": false,
     "scripts": [
       "background.js"
+    ],
+    "permissions": [
+      "<all_urls>"
     ]
   },
   "web_accessible_resources": [

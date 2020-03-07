@@ -28,6 +28,9 @@ chrome.runtime.onMessage.addListener(
             };
             sendResponse(domInfo);
         }
+        if (request.from === 'background' && request.subject === 'corsRequest') {
+            handleCORSResponse(request);
+        }
     }
 );
 
@@ -173,27 +176,54 @@ function parsePolicy(policy) {
 
 //Find a link to the privacy policy on the website
 function findPrivacyPolicy() {
-    var url = $('a[href*="privacy"]').attr('href');
-    return url;
+    var url;
+
+    $('a').each(function() {
+        if ($(this).attr('href') !== undefined && $(this).attr('href').toLowerCase().indexOf('privacy') !== -1 &&  $(this).text().toLowerCase().indexOf('privacy') !== -1) {
+            url = $(this).attr('href');
+        }
+    });
+
+    if (url !== undefined) {
+        if (url.indexOf('http://') === -1 && url.indexOf('https://') === -1) {
+
+            while (url.indexOf('/') == 0) {
+                url = url.substring(1);
+            }
+
+            if (url.indexOf('.') == -1 || (url.indexOf('.') > url.indexOf('/'))) {
+                url = window.location.hostname + '/' + url;
+            }
+
+            url = 'https://' + url;
+            url = url.replace(/([^:]\/)\/+/g, "$1");
+        }
+        return url;
+    }
+}
+
+function makeCORSRequest(link) {
+    chrome.runtime.sendMessage({
+        from: 'content',
+        subject: 'CORSrequest',
+        link: link
+    });
+}
+function handleCORSResponse(response) {
+    if (response.status === 'success') {
+        parsePolicy(response.data);
+    } else if (response.status === 'failed') {
+        console.log(response.data);
+        console.log('The website blocked access to the Privacy Policy');
+        injectScript();
+    }
 }
 
 //Get the policy as a string
 function getPolicy(link) {
     if (link !== undefined) {
         console.log('Paradox is loading the Privacy Policy from: ' + link);
-        var privacyPolicy;
-
-        //get the privacy policy using a JQuery GET request
-        $.get(link, function (data) {
-            if (data !== undefined && data !== null && data !== "") {
-                console.log(data);
-                privacyPolicy = data;
-                parsePolicy(privacyPolicy);
-            } else {
-                console.log('The website blocked access to the Privacy Policy');
-                injectScript();
-            }
-        });
+        makeCORSRequest(link);
     } else {
         console.log('Paradox failed to find a Privacy Policy for this Website');
         injectScript();
