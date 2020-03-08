@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Report Privacy Violation</title>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/violation.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/shared.css">
+    <link rel="stylesheet" type="text/css" href="css/violation.css">
+    <link rel="icon" type="image/png" href="img/logo.png"/>
+</head>
+<body>
+<div id="container">
+    <div id="banner">
+        <div id="logo"></div>
+        <div id="text-container">
+            <div id="title">Paradox</div>
+            <div id="version"></div>
+        </div>
+    </div>
+    <div class="separator">
+        <div class="topic-container">
+            <div class="topic-title">Tracking Data</div>
+            <div class="items" id="track">
+                <div id="session" class="tracker">
+                    <div id="session-icon" class="result-icon"></div>
+                    <div id="session-text" class="result-text"></div>
+                </div>
+                <div id="ads" class="tracker">
+                    <div id="ads-icon" class="result-icon"></div>
+                    <div id="ads-text" class="result-text"></div>
+                </div>
+                <div id="adblock" class="tracker">
+                    <div id="adblock-icon" class="result-icon"></div>
+                    <div id="adblock-text" class="result-text"></div>
+                </div>
+                <div id="location" class="tracker">
+                    <div id="location-icon" class="result-icon"></div>
+                    <div id="location-text" class="result-text"></div>
+                </div>
+                <div id="fingerprint" class="tracker">
+                    <div id="fingerprint-icon" class="result-icon"></div>
+                    <div id="fingerprint-text" class="result-text"></div>
+                </div>
+            </div>
+        </div>
+        <div class="topic-container">
+            <div class="topic-title">Privacy Policy Analysis</div>
+            <div class="items" id="policy">
+                <div id="data-collection" class="tracker">
+                    <div id="data-collection-icon" class="result-icon"></div>
+                    <div id="data-collection-text" class="result-text"></div>
+                </div>
+                <div id="your-choices" class="tracker">
+                    <div id="your-choices-icon" class="result-icon"></div>
+                    <div id="your-choices-text" class="result-text"></div>
+                </div>
+                <div id="data-usage" class="tracker">
+                    <div id="data-usage-icon" class="result-icon"></div>
+                    <div id="data-usage-text" class="result-text"></div>
+                </div>
+                <div id="tracking" class="tracker">
+                    <div id="tracking-icon" class="result-icon"></div>
+                    <div id="tracking-text" class="result-text"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="separator">
+        <div class="topic-container" id="email">
+            <div class="topic-title">Email Addresses</div>
+            <div class="tracker" id="no-email">
+                <div class="result-icon warning"></div>
+                <div class="result-text">No email address found</div>
+            </div>
+        </div>
+        <div class="topic-container" id="violations">
+            <div class="topic-title">Potential Privacy Violations</div>
+            <div class="tracker" id="no-violations">
+                <div class="result-icon tick"></div>
+                <div class="result-text">No violations detected</div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

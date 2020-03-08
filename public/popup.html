@@ -7,32 +7,36 @@
     <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 <body>
-<div id="banner"></div>
+<div id="banner">
+    <div id="logo"></div>
+    <div id="title">Paradox</div>
+    <div id="version"></div>
+</div>
 <div id="container">
     <div class="topic-container">
         <div class="topic-title">Tracking Data</div>
         <div class="items" id="track">
-        <div id="session" class="tracker">
-            <div id="session-icon" class="result-icon"></div>
-            <div id="session-text" class="result-text"></div>
+            <div id="session" class="tracker">
+                <div id="session-icon" class="result-icon"></div>
+                <div id="session-text" class="result-text"></div>
+            </div>
+            <div id="ads" class="tracker">
+                <div id="ads-icon" class="result-icon"></div>
+                <div id="ads-text" class="result-text"></div>
+            </div>
+            <div id="adblock" class="tracker">
+                <div id="adblock-icon" class="result-icon"></div>
+                <div id="adblock-text" class="result-text"></div>
+            </div>
+            <div id="location" class="tracker">
+                <div id="location-icon" class="result-icon"></div>
+                <div id="location-text" class="result-text"></div>
+            </div>
+            <div id="fingerprint" class="tracker">
+                <div id="fingerprint-icon" class="result-icon"></div>
+                <div id="fingerprint-text" class="result-text"></div>
+            </div>
         </div>
-        <div id="ads" class="tracker">
-            <div id="ads-icon" class="result-icon"></div>
-            <div id="ads-text" class="result-text"></div>
-        </div>
-        <div id="adblock" class="tracker">
-            <div id="adblock-icon" class="result-icon"></div>
-            <div id="adblock-text" class="result-text"></div>
-        </div>
-        <div id="location" class="tracker">
-            <div id="location-icon" class="result-icon"></div>
-            <div id="location-text" class="result-text"></div>
-        </div>
-        <div id="fingerprint" class="tracker">
-            <div id="fingerprint-icon" class="result-icon"></div>
-            <div id="fingerprint-text" class="result-text"></div>
-        </div>
-    </div>
     </div>
     <div class="topic-container">
         <div class="topic-title">Privacy Policy Analysis</div>
@@ -57,8 +61,10 @@
     </div>
     <div id="buttons">
         <button id="full-report">Open Full Report</button>
-        <button id="report-violation">Report Violation<div id="violation-count"></div></button>
+        <button id="report-violation">Report Violation
+            <div id="violation-count"></div>
+        </button>
     </div>
-    </div>
+</div>
 </body>
 </html>

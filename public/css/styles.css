@@ -7,13 +7,39 @@ body {
 }
 
 #banner {
-    width: 250px;
-    display: block;
-    background-image: url("../img/banner.svg");
-    background-size: auto;
+    width: 100%;
+    height: 45px;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+}
+
+#banner #logo {
+    width: 45px;
+    height: 45px;
+    background-image: url("../img/logo.png");
     background-repeat: no-repeat;
-    height: 45.872px;
-    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.4);
+    background-position: center;
+    background-size: 65%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+#banner #title {
+    font-size: 30px;
+    line-height: 35px;
+    vertical-align: top;
+    display: inline-block;
+}
+
+#banner #version {
+    line-height: 8px;
+    font-size: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 5px;
+    color: #999;
 }
 
 #container {
@@ -26,8 +52,8 @@ body {
     display: inline-block;
     height: 22px;
     width: 22px;
-    margin-left:4px;
-    margin-top:4px;
+    margin-left: 4px;
+    margin-top: 4px;
     background-repeat: no-repeat;
     background-position: center;
     background-size: 65%;
@@ -80,23 +106,26 @@ body {
     border: 1px solid #eee;
     position: relative;
 }
+
 .items#track {
     height: calc(32px * 5);
 }
+
 .items#policy {
     height: calc(32px * 4);
 }
 
 .result-text {
     position: absolute;
-    top:50%;
-    left:30px;
-    padding:2.5px 5px;
+    top: 50%;
+    left: 30px;
+    padding: 2.5px 5px;
     width: calc(100% - 40px);
     line-height: 12px;
     font-size: 12px;
     transform: translateY(-50%);
 }
+
 .topic-title {
     font-size: 12px;
     text-align: center;
@@ -104,19 +133,23 @@ body {
     color: #333;
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
 }
+
 .warning {
     background-image: url("../img/warning.svg");
     background-color: #FB8C00;
 }
+
 .tick {
     background-image: url("../img/tick.svg");
     background-color: #43A047;
 }
+
 #buttons {
     width: 100%;
     margin: 7.5px 0 10px;
     position: relative;
 }
+
 #buttons button {
     background-color: #efefef;
     color: #444;
@@ -126,48 +159,54 @@ body {
     border: none;
     border-radius: 10px;
     position: absolute;
-    top:0;
+    top: 0;
     padding: 5px;
     margin-bottom: 7.5px;
     cursor: pointer;
     transition: .3s;
     overflow: hidden;
 }
+
 #buttons #full-report {
-    left:1px;
+    left: 1px;
 }
 
 #buttons #report-violation {
-    right:1px;
+    right: 1px;
 }
+
 #buttons .with-icon {
     padding: 5px 10px 5px 0px;
 }
+
 #buttons button:hover {
     background-color: #e5e5e5;
 }
+
 #no-policy {
     position: absolute;
-    top:0;
-    left:0;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     background-color: #e53935;
 }
+
 #no-policy span {
     position: absolute;
-    top:50%;
+    top: 50%;
     transform: translateY(-50%);
     padding: 10px;
     text-align: center;
     color: #fff;
 }
+
 #violation-count {
     width: 16px;
     height: 16px;
     position: absolute;
-    top:3px;
-    right:3px;
+    top: 3px;
+    right: 3px;
     background-color: #e53935;
     border-radius: 100%;
     color: #fff;

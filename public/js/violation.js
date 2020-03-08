@@ -5,41 +5,19 @@ const locationList = ['location'];
 const sessionList = ['session'];
 const fingerprintList = ['analytic', 'fingerprint', 'browserwidth', 'browserheight', 'screenwidth', 'screenheight', 'wd=', 'user'];
 var violations = 0, violationJustification = [];
-var paradoxData;
 
 $(document).ready(function () {
-    // ...query for the active tab...
-    chrome.tabs.query({
-        active: true,
-        currentWindow: true
-    }, tabs => {
-        // ...and send a request for the DOM info...
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {from: 'popup', subject: 'getParadoxObject'},
-            function updatePopup(response) {
-                parseReponse(response);
-            });
-    });
-
     $('#version').text('Version: ' + chrome.runtime.getManifest().version);
-
+    chrome.runtime.sendMessage({from: 'violation', subject: 'getParadoxData'},
+        function (response) {
+            parseReponse(response.data);
+        }
+    );
 });
 
-chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-        if (request.msg === "data_update") {
-            parseReponse(request.data);
-        }
-    }
-);
-
-var host = '';
 
 function parseReponse(data) {
-    if (data !== undefined && (data.url == host || data.type == 'load')) {
-        host = data.url;
-
+    if (data !== undefined) {
         if (data.cookies !== undefined) {
             performDataChecks('cookies', data.cookies);
         }
@@ -54,9 +32,10 @@ function parseReponse(data) {
             analysePolicy(data.policy);
         } else {
             $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing. If you can\'t find a Privacy Policy on this website, consider using the "Report Violation" button.</span></div>');
-            updateViolations('no policy');
+            updateViolations('no privacy policy');
         }
         paradoxData = data;
+        console.log(paradoxData)
     }
 }
 
@@ -224,31 +203,27 @@ function analysePolicy(paradoxPolicy) {
 
         $('#tracking-icon').addClass('tick');
     }
+
+    if (paradoxPolicy.email !== null && paradoxPolicy.email.length !== 0) {
+        if ($('#no-email').length !== 0) {
+            $('#no-email').remove();
+        }
+        paradoxPolicy.email = paradoxPolicy.email.filter( onlyUnique );
+        $(paradoxPolicy.email).each(function() {
+            $('#email').append('<div class="tracker"><div class="result-icon email"></div><div class="result-text">' + this + '</div></div> ')
+        })
+    }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('report-violation').addEventListener('click', function () {
-        reportViolation();
-    });
-    document.getElementById('full-report').addEventListener('click', function () {
-        fullReport();
-    });
-});
-
-function reportViolation() {
-        chrome.runtime.sendMessage({from: 'popup',subject:'openTab',tab:'public/violation.html'});
-};
-
-function fullReport() {
-    chrome.tabs.create({'url': 'public/report.html'});
-};
+function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+}
 
 function updateViolations(justification) {
     violations++;
     violationJustification.push(justification);
-
-    $('#report-violation').addClass('with-icon');
-    $('#violation-count').css('visibility', 'visible');
-    $('#violation-count').text(violations.toString());
+    if ($('#no-violations').length !== 0) {
+        $('#no-violations').remove();
+    }
+    $('#violations').append('<div class="tracker"><div class="result-icon warning"></div><div class="result-text">' + justification.replace(/^\w/, c => c.toUpperCase()) + '</div></div> ')
 }
-
