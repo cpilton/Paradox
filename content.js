@@ -53,6 +53,9 @@ window.addEventListener("message", function (message) {
             warningImg: chrome.extension.getURL("/public/img/warning.svg")
         }, "*");
     }
+    if(message.data.from == 'paradox' && message.data.type == 'corsInterception') {
+        addCors(message.data.data)
+    }
 });
 
 function injectScript() {
@@ -62,6 +65,13 @@ function injectScript() {
         this.remove();
     };
     (document.head || document.documentElement).appendChild(s);
+}
+
+function addCors(data) {
+    if (cors.indexOf(data) == -1) {
+        cors.push(data);
+    }
+    updatePopup();
 }
 
 //Get cookies from host
