@@ -1,5 +1,5 @@
 var result = {ads: {}, adblock: {}, trackers: {}, location: {}, fingerprint: {}, session: {}};
-const adsList = ['advert', 'advertisement', 'session'];
+const adsList = ['advert', 'advertisement'];
 const adblockList = ['adblock', 'adblk'];
 const locationList = ['location'];
 const sessionList = ['session'];

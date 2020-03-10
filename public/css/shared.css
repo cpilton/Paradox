@@ -9,7 +9,6 @@ body {
 
 #container {
     width: 1000px;
-    height: 100%;
     background-color: #FAFAFA;
     border: 1px solid #EEEEEE;
     box-shadow: 0px 1px 1px #EEEEEE;
@@ -56,13 +55,16 @@ body {
     padding-left: 3px;
 }
 .topic-container {
-    width: calc(50% - 42px);
+    width: calc(100% - 42px);
     margin: 20px;
     display: inline-block;
     box-shadow: 0px 1px 2px  #EEEEEE;
     background-color: #F9F9F9;
     vertical-align: top;
     position: relative;
+}
+.topic-container:nth-child(odd) {
+    float: right;
 }
 .topic-title {
     width: 100%;
@@ -134,4 +136,25 @@ body {
 }
 .separator {
     box-shadow: 0px 1px 1px #EEEEEE;
+    column-count: 2;
+    column-gap: 0;
+    width: 100%;
+    padding-top:30px;
+    position: relative;
+}
+.title {
+    text-align: center;
+    font-size: 20px;
+    position: absolute;
+    top:10px;
+    left:50%;
+    transform: translateX(-50%);
+}
+.report-title {
+    right:50px;
+    top:50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    position: absolute;
+    color: #999;
 }

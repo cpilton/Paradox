@@ -1,45 +1,25 @@
 var result = {ads: {}, adblock: {}, trackers: {}, location: {}, fingerprint: {}, session: {}};
-const adsList = ['advert', 'advertisement'];
+const adsList = ['advert', 'advertisement','ads'];
 const adblockList = ['adblock', 'adblk'];
 const locationList = ['location'];
 const sessionList = ['session'];
 const fingerprintList = ['analytic', 'fingerprint', 'browserwidth', 'browserheight', 'screenwidth', 'screenheight', 'wd=', 'user'];
 var violations = 0, violationJustification = [];
-var paradoxData;
 
 $(document).ready(function () {
-    // ...query for the active tab...
-    chrome.tabs.query({
-        active: true,
-        currentWindow: true
-    }, tabs => {
-        // ...and send a request for the DOM info...
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {from: 'popup', subject: 'getParadoxObject'},
-            function updatePopup(response) {
-                parseReponse(response);
-            });
-    });
-
     $('#version').text('Version: ' + chrome.runtime.getManifest().version);
 
+    chrome.runtime.sendMessage({from: 'violation', subject: 'getParadoxData'},
+        function (response) {
+            parseReponse(response.data);
+            $('#url').text(response.data.url);
+        }
+    );
 });
 
-chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-        if (request.msg === "data_update") {
-            parseReponse(request.data);
-        }
-    }
-);
-
-var host = '';
 
 function parseReponse(data) {
-    if (data !== undefined && (data.url == host || data.type == 'load')) {
-        host = data.url;
-
+    if (data !== undefined) {
         if (data.cookies !== undefined) {
             performDataChecks('cookies', data.cookies);
         }
@@ -54,7 +34,7 @@ function parseReponse(data) {
             analysePolicy(data.policy);
         } else {
             $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing. If you can\'t find a Privacy Policy on this website, consider using the "Report Violation" button.</span></div>');
-            updateViolations('no policy');
+            updateViolations('no privacy policy');
         }
         paradoxData = data;
     }
@@ -71,17 +51,19 @@ function performDataChecks(type, data) {
 function checkForMatch(data, wordList) {
     const dataString = data.toString();
     var count = 0;
+    var matches = [];
 
     $(wordList).each(function () {
         if (dataString.search(this) != -1) {
             count++;
+            matches.push(this);
         }
     });
 
     if (count == 0) {
-        return false;
+        return {value: false};
     } else {
-        return true;
+        return {value: true, matches: matches}
     }
 }
 
@@ -89,42 +71,44 @@ function analyseResults() {
     var types = ['ads', 'adblock', 'location', 'fingerprint', 'session'];
 
     $(types).each(function () {
-        if (result[this].cookies == true || result[this].cors == true || result[this].storage == true) {
+        if (result[this].cookies.value || result[this].cors.value || result[this].storage.value) {
             $('#' + this + '-icon').css('background-color', '#FB8C00');
         } else {
             $('#' + this + '-icon').css('background-color', '#43A047');
         }
     });
 
-    if (result.session.cookies || result.session.cors || result.session.storage) {
+    if (result.session.cookies.value || result.session.cors.value || result.session.storage.value) {
         $('#session-text').text('Session data is being used to recognise your device');
     } else {
         $('#session-text').text('Session data is not being collected');
     }
 
-    if (result.ads.cookies || result.ads.cors || result.ads.storage) {
+    if (result.ads.cookies.value || result.ads.cors.value || result.ads.storage.value) {
         $('#ads-text').text('Websites you visit are being logged to personalise your ads');
     } else {
         $('#ads-text').text('The websites you visit are not being logged for advertising');
     }
 
-    if (result.adblock.cookies || result.adblock.cors || result.adblock.storage) {
+    if (result.adblock.cookies.value || result.adblock.cors.value || result.adblock.storage.value) {
         $('#adblock-text').text('Ad-block detection may be used to show you ads');
     } else {
         $('#adblock-text').text('Ad-block detection is not in use');
     }
 
-    if (result.location.cookies || result.location.cors || result.location.storage) {
+    if (result.location.cookies.value || result.location.cors.value || result.location.storage.value) {
         $('#location-text').text('Your location is being tracked');
     } else {
         $('#location-text').text('Your location is not being tracked');
     }
 
-    if (result.fingerprint.cookies || result.fingerprint.cors || result.fingerprint.storage) {
+    if (result.fingerprint.cookies.value || result.fingerprint.cors.value || result.fingerprint.storage.value) {
         $('#fingerprint-text').text('Fingerprinting is being used to recognise your device');
     } else {
         $('#fingerprint-text').text('Fingerprinting is not being used');
     }
+
+    fullTrackerAnalysis();
 }
 
 function analysePolicy(paradoxPolicy) {
@@ -224,31 +208,83 @@ function analysePolicy(paradoxPolicy) {
 
         $('#tracking-icon').addClass('tick');
     }
+
+    if (paradoxPolicy.email !== null && paradoxPolicy.email.length !== 0) {
+        if ($('#no-email').length !== 0) {
+            $('#no-email').remove();
+        }
+        paradoxPolicy.email = paradoxPolicy.email.filter(onlyUnique);
+        $(paradoxPolicy.email).each(function () {
+            $('#email').append('<div class="tracker"><div class="result-icon email"></div><div class="result-text">' + this + '</div></div> ')
+        })
+    }
+    fullPolicyAnalysis(paradoxPolicy);
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('report-violation').addEventListener('click', function () {
-        reportViolation();
-    });
-    document.getElementById('full-report').addEventListener('click', function () {
-        fullReport();
-    });
-});
-
-function reportViolation() {
-        chrome.runtime.sendMessage({from: 'popup',subject:'openTab',tab:'public/violation.html'});
-};
-
-function fullReport() {
-    chrome.tabs.create({'url': 'public/report.html'});
-};
+function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+}
 
 function updateViolations(justification) {
     violations++;
     violationJustification.push(justification);
-
-    $('#report-violation').addClass('with-icon');
-    $('#violation-count').css('visibility', 'visible');
-    $('#violation-count').text(violations.toString());
+    if ($('#no-violations').length !== 0) {
+        $('#no-violations').remove();
+    }
+    $('#violations').append('<div class="tracker"><div class="result-icon warning"></div><div class="result-text">' + justification.replace(/^\w/, c => c.toUpperCase()) + '</div></div> ')
 }
 
+function fullTrackerAnalysis() {
+    var types = ['ads', 'adblock', 'location', 'fingerprint', 'session'];
+    var storageTypes = ['cookies','cors','storage'];
+    $(types).each(function () {
+        if (result[this].cookies.value || result[this].cors.value || result[this].storage.value) {
+            var type = this;
+            $(result[type]).each(function () {
+                var resultType = this;
+                $(storageTypes).each(function() {
+                    var storageType = this;
+                    $(resultType[storageType]).each(function () {
+                        if (this.value) {
+                            $(this.matches).each(function () {
+                                var div = '<div class="tracker">';
+                                div += '<div class="result-icon warning"></div>';
+                                div += '<div class="result-text">The following was detected in ' + storageType + ': ' + this + '</div>';
+                                div += '</div>';
+
+                                $('#no-' + type).remove();
+                                $('#' + type + '-full').append(div);
+                            });
+                        }
+                    });
+                });
+            });
+        }
+    });
+}
+
+function fullPolicyAnalysis(policy) {
+    console.log(policy);
+
+    for (var key in policy) {
+        var type = key.toLowerCase();
+        if (policy[key].match) {
+            var responseType;
+            if($('#'+ type + ' .result-icon').hasClass('tick')) {
+                responseType = 'warning';
+            } else {
+                responseType = 'tick';
+            }
+            $('#no-' + type).remove();
+
+            $(policy[key].data).each(function() {
+                var div = '<div class="tracker">';
+                div += '<div class="result-icon ' + responseType + '"></div>';
+                div += '<div class="result-text">The following was detected: ' + this + '</div>';
+                div += '</div>';
+
+                $('#' + type).append(div);
+            });
+        }
+    }
+}

@@ -2,15 +2,235 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Full Privacy Report</title>
+    <title>Paradox Privacy Report</title>
     <script src="js/jquery.min.js"></script>
     <script src="js/report.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/shared.css">
-    <link rel="stylesheet" type="text/css" href="css/report.css">
     <link rel="icon" type="image/png" href="img/logo.png"/>
 </head>
 <body>
-
+<div id="container">
+    <div id="banner">
+        <div id="logo"></div>
+        <div id="text-container">
+            <div id="title">Paradox</div>
+            <div id="version"></div>
+        </div>
+        <div class="report-title">Paradox Privacy Report for: <span id="url"></span></div>
+    </div>
+    <div class="separator">
+        <div class="title">Summary</div>
+        <div class="topic-container">
+            <div class="topic-title">Tracking Data</div>
+            <div class="items" id="track">
+                <div id="session" class="tracker">
+                    <div id="session-icon" class="result-icon"></div>
+                    <div id="session-text" class="result-text"></div>
+                </div>
+                <div id="ads" class="tracker">
+                    <div id="ads-icon" class="result-icon"></div>
+                    <div id="ads-text" class="result-text"></div>
+                </div>
+                <div id="adblock" class="tracker">
+                    <div id="adblock-icon" class="result-icon"></div>
+                    <div id="adblock-text" class="result-text"></div>
+                </div>
+                <div id="location" class="tracker">
+                    <div id="location-icon" class="result-icon"></div>
+                    <div id="location-text" class="result-text"></div>
+                </div>
+                <div id="fingerprint" class="tracker">
+                    <div id="fingerprint-icon" class="result-icon"></div>
+                    <div id="fingerprint-text" class="result-text"></div>
+                </div>
+            </div>
+        </div>
+        <div class="topic-container">
+            <div class="topic-title">Privacy Policy Analysis</div>
+            <div class="items" id="policy">
+                <div id="data-collection" class="tracker">
+                    <div id="data-collection-icon" class="result-icon"></div>
+                    <div id="data-collection-text" class="result-text"></div>
+                </div>
+                <div id="your-choices" class="tracker">
+                    <div id="your-choices-icon" class="result-icon"></div>
+                    <div id="your-choices-text" class="result-text"></div>
+                </div>
+                <div id="data-usage" class="tracker">
+                    <div id="data-usage-icon" class="result-icon"></div>
+                    <div id="data-usage-text" class="result-text"></div>
+                </div>
+                <div id="tracking" class="tracker">
+                    <div id="tracking-icon" class="result-icon"></div>
+                    <div id="tracking-text" class="result-text"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="separator">
+        <div class="title">Tracker Analysis</div>
+        <div class="topic-container" id="session-full">
+            <div class="topic-title">Session Data</div>
+            <div class="tracker" id="no-session">
+                <div class="result-icon tick"></div>
+                <div class="result-text">Session data is not being collected</div>
+            </div>
+        </div>
+        <div class="topic-container" id="ads-full">
+            <div class="topic-title">Advertising Trackers</div>
+            <div class="tracker" id="no-ads">
+                <div class="result-icon tick"></div>
+                <div class="result-text">The websites you visit are not being logged for advertising</div>
+            </div>
+        </div>
+        <div class="topic-container" id="adblock-full">
+            <div class="topic-title">Ad-Block Detection</div>
+            <div class="tracker" id="no-adblock">
+                <div class="result-icon tick"></div>
+                <div class="result-text">Ad-block detection is not in use</div>
+            </div>
+        </div>
+        <div class="topic-container" id="location-full">
+            <div class="topic-title">Location Tracking</div>
+            <div class="tracker" id="no-location">
+                <div class="result-icon tick"></div>
+                <div class="result-text">Your location is not being tracked</div>
+            </div>
+        </div>
+        <div class="topic-container" id="fingerprint-full">
+            <div class="topic-title">Device Fingerprinting</div>
+            <div class="tracker" id="no-fingerprint">
+                <div class="result-icon tick"></div>
+                <div class="result-text">Fingerprinting is not being used</div>
+            </div>
+        </div>
+    </div>
+    <div class="separator">
+        <div class="title">Privacy Policy Analysis</div>
+        <div class="topic-container" id="advertising">
+            <div class="topic-title">Advertising</div>
+            <div class="tracker" id="no-advertising">
+                <div class="result-icon tick"></div>
+                <div class="result-text">Adverts will not be shown on this website</div>
+            </div>
+        </div>
+        <div class="topic-container" id="cookies">
+            <div class="topic-title">Cookies</div>
+            <div class="tracker" id="no-cookies">
+                <div class="result-icon tick"></div>
+                <div class="result-text">This website does not use cookies</div>
+            </div>
+        </div>
+        <div class="topic-container" id="datarelease">
+            <div class="topic-title">Data Release</div>
+            <div class="tracker" id="no-datarelease">
+                <div class="result-icon tick"></div>
+                <div class="result-text">This website will not release your personal information</div>
+            </div>
+        </div>
+        <div class="topic-container" id="dataretention">
+            <div class="topic-title">Data Retention</div>
+            <div class="tracker" id="no-dataretention">
+                <div class="result-icon tick"></div>
+                <div class="result-text">This website does not keep a copy of your information once you leave</div>
+            </div>
+        </div>
+        <div class="topic-container" id="datasecurity">
+            <div class="topic-title">Data Security</div>
+            <div class="tracker" id="no-datasecurity">
+                <div class="result-icon warning"></div>
+                <div class="result-text">There are no measures in place to keep your data secure</div>
+            </div>
+        </div>
+        <div class="topic-container" id="directdatacollection">
+            <div class="topic-title">Direct Data Collection</div>
+            <div class="tracker" id="no-directdatacollection">
+                <div class="result-icon tick"></div>
+                <div class="result-text">This website does not collect information from you</div>
+            </div>
+        </div>
+        <div class="topic-container" id="externaldatacollection">
+            <div class="topic-title">External Data Collection</div>
+            <div class="tracker" id="no-externaldatacollection">
+                <div class="result-icon tick"></div>
+                <div class="result-text">This website does not use third-parties to collect information on you</div>
+            </div>
+        </div>
+        <div class="topic-container" id="informationrequest">
+            <div class="topic-title">Information Request</div>
+            <div class="tracker" id="no-informationrequest">
+                <div class="result-icon warning"></div>
+                <div class="result-text">There is no mention of being able to request your data</div>
+            </div>
+        </div>
+        <div class="topic-container" id="recommendations">
+            <div class="topic-title">Recommendations</div>
+            <div class="tracker" id="no-recommendations">
+                <div class="result-icon tick"></div>
+                <div class="result-text">The website wont collect data on you to recommend other products</div>
+            </div>
+        </div>
+        <div class="topic-container" id="rejectdatacollection">
+            <div class="topic-title">Reject Data Collection</div>
+            <div class="tracker" id="no-rejectdatacollection">
+                <div class="result-icon warning"></div>
+                <div class="result-text">You can't object to data collection</div>
+            </div>
+        </div>
+        <div class="topic-container" id="rejectdatacollectionconsequenc">
+            <div class="topic-title">Reject Data Collection Consequence</div>
+            <div class="tracker" id="no-rejectdatacollectionconsequence">
+                <div class="result-icon tick"></div>
+                <div class="result-text">There are no consequences to rejecting data collection</div>
+            </div>
+        </div>
+        <div class="topic-container" id="thirdpartysharing">
+            <div class="topic-title">Third Party Sharing</div>
+            <div class="tracker" id="no-thirdpartysharing">
+                <div class="result-icon tick"></div>
+                <div class="result-text">Your data won't be shared with third-parties</div>
+            </div>
+        </div>
+        <div class="topic-container" id="usabilitytracking">
+            <div class="topic-title">Usability Tracking</div>
+            <div class="tracker" id="no-usabilitytracking">
+                <div class="result-icon tick"></div>
+                <div class="result-text">Your usage of this website is not being monitored</div>
+            </div>
+        </div>
+        <div class="topic-container" id="analytics">
+            <div class="topic-title">Analytics</div>
+            <div class="tracker" id="no-analytics">
+                <div class="result-icon tick"></div>
+                <div class="result-text">Analytic data is not being collected</div>
+            </div>
+        </div>
+        <div class="topic-container" id="datatypes">
+            <div class="topic-title">Data Types</div>
+            <div class="tracker" id="no-datatypes">
+                <div class="result-icon tick"></div>
+                <div class="result-text">No personal data will be collected</div>
+            </div>
+        </div>
+    </div>
+    <div class="separator">
+        <div class="title">Useful Information</div>
+        <div class="topic-container" id="email">
+            <div class="topic-title">Email Addresses</div>
+            <div class="tracker" id="no-email">
+                <div class="result-icon warning"></div>
+                <div class="result-text">No email address found</div>
+            </div>
+        </div>
+        <div class="topic-container" id="violations">
+            <div class="topic-title">Potential Privacy Violations</div>
+            <div class="tracker" id="no-violations">
+                <div class="result-icon tick"></div>
+                <div class="result-text">No violations detected</div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
