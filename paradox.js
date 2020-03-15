@@ -273,7 +273,7 @@ function updatePopup() {
 
     img = document.getElementById('data-usage-img');
     liAppend = document.getElementById('data-usage-list');
-    if (paradoxPolicy.thirdPartySharing.match || paradoxPolicy.recommendations.match || paradoxPolicy.dataSecurity.match) {
+    if (paradoxPolicy.thirdPartySharing.match || paradoxPolicy.recommendations.match || !paradoxPolicy.dataSecurity.match) {
         img.style.backgroundImage = 'url("' + warningImage + '")';
         img.style.backgroundColor = '#FB8C00';
     } else {

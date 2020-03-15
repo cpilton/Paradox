@@ -3,7 +3,7 @@ const adsList = ['advert', 'advertisement'];
 const adblockList = ['adblock', 'adblk'];
 const locationList = ['location'];
 const sessionList = ['session'];
-const fingerprintList = ['analytic', 'fingerprint', 'browserwidth', 'browserheight', 'screenwidth', 'screenheight', 'wd=', 'user'];
+const fingerprintList = ['analytic', 'fingerprint', 'browserwidth', 'browserheight', 'screenwidth', 'screenheight', 'wd='];
 var violations = 0, violationJustification = [];
 var paradoxData;
 

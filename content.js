@@ -48,7 +48,7 @@ window.addEventListener("message", function (message) {
             from: 'content',
             type: 'paradoxPolicy',
             policy: policyResult,
-            icon: chrome.extension.getURL("/public/img/logo.png"),
+            icon: chrome.extension.getURL("/public/img/logo.svg"),
             tickImg: chrome.extension.getURL("/public/img/tick.svg"),
             warningImg: chrome.extension.getURL("/public/img/warning.svg")
         }, "*");

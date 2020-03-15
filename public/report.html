@@ -7,7 +7,7 @@
     <script src="js/report.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/shared.css">
-    <link rel="icon" type="image/png" href="img/logo.png"/>
+    <link rel="icon" type="image/png" href="img/logo.ico"/>
 </head>
 <body>
 <div id="container">
@@ -18,6 +18,7 @@
             <div id="version"></div>
         </div>
         <div class="report-title">Paradox Privacy Report for: <span id="url"></span></div>
+        <div id="report-date"></div>
     </div>
     <div class="separator">
         <div class="title">Summary</div>
@@ -66,6 +67,18 @@
                     <div id="tracking-text" class="result-text"></div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="separator">
+        <div class="title">Tracker Count</div>
+        <div class="topic-container" id="cookies-tracker">
+            <div class="topic-title">Cookies</div>
+        </div>
+        <div class="topic-container" id="storage-tracker">
+            <div class="topic-title">Local Storage</div>
+        </div>
+        <div class="topic-container" id="cors-tracker">
+            <div class="topic-title">GET/POST Requests</div>
         </div>
     </div>
     <div class="separator">

@@ -11,6 +11,8 @@ $(document).ready(function () {
     chrome.runtime.sendMessage({from: 'violation', subject: 'getParadoxData'},
         function (response) {
             parseReponse(response.data);
+            $('#url').text(response.data.url);
+            $('#report-date').text(new Date().toLocaleString());
         }
     );
 });
@@ -35,7 +37,6 @@ function parseReponse(data) {
             updateViolations('no privacy policy');
         }
         paradoxData = data;
-        console.log(paradoxData)
     }
 }
 
@@ -227,3 +228,12 @@ function updateViolations(justification) {
     }
     $('#violations').append('<div class="tracker"><div class="result-icon warning"></div><div class="result-text">' + justification.replace(/^\w/, c => c.toUpperCase()) + '</div></div> ')
 }
+
+$(document).ready(function() {
+    $('#send-email').click(function() {
+        var address = $('#email-address').val();
+        var body = $('#email-creator').val();
+        var subject = 'Potential Privacy Violation';
+        window.open("mailto:"+address+"?subject="+subject+"&body="+body);
+    });
+});

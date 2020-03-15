@@ -13,6 +13,7 @@ $(document).ready(function () {
         function (response) {
             parseReponse(response.data);
             $('#url').text(response.data.url);
+            $('#report-date').text(new Date().toLocaleString());
         }
     );
 });
@@ -36,6 +37,7 @@ function parseReponse(data) {
             $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing. If you can\'t find a Privacy Policy on this website, consider using the "Report Violation" button.</span></div>');
             updateViolations('no privacy policy');
         }
+        trackerTypes(data);
         paradoxData = data;
     }
 }
@@ -264,8 +266,6 @@ function fullTrackerAnalysis() {
 }
 
 function fullPolicyAnalysis(policy) {
-    console.log(policy);
-
     for (var key in policy) {
         var type = key.toLowerCase();
         if (policy[key].match) {
@@ -287,4 +287,37 @@ function fullPolicyAnalysis(policy) {
             });
         }
     }
+}
+function trackerTypes(data) {
+    var storageTypes = ['cookies','cors','storage'];
+    $(storageTypes).each(function() {
+        var length, responseType, text;
+
+        if (data[this].length !== undefined) {
+            length = data[this].length;
+        } else {
+            length = Object.keys(data[this]).length;
+        }
+
+        if(length > 0) {
+            responseType = 'warning';
+        } else {
+            responseType = 'tick';
+        }
+
+        if (this == 'cookies') {
+            text = 'cookie';
+        } else if (this == 'cors') {
+            text = 'GET/POST';
+        } else if (this == 'storage') {
+            text = 'local storage'
+        }
+
+        var div = '<div class="tracker">';
+        div += '<div class="result-icon ' + responseType + '"></div>';
+        div += '<div class="result-text">The number of ' + text + ' trackers detected was: ' + length + '</div>';
+        div += '</div>';
+
+        $('#' + this + '-tracker').append(div);
+    });
 }

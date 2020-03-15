@@ -7,7 +7,7 @@
     <script src="js/violation.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/shared.css">
-    <link rel="icon" type="image/png" href="img/logo.png"/>
+    <link rel="icon" type="image/png" href="img/logo.ico"/>
 </head>
 <body>
 <div id="container">
@@ -17,8 +17,11 @@
             <div id="title">Paradox</div>
             <div id="version"></div>
         </div>
+        <div class="report-title">Report a Privacy Violation at: <span id="url"></span></div>
+        <div id="report-date"></div>
     </div>
     <div class="separator">
+        <div class="title">Summary</div>
         <div class="topic-container">
             <div class="topic-title">Tracking Data</div>
             <div class="items" id="track">
@@ -67,6 +70,7 @@
         </div>
     </div>
     <div class="separator">
+        <div class="title">Useful Information</div>
         <div class="topic-container" id="email">
             <div class="topic-title">Email Addresses</div>
             <div class="tracker" id="no-email">
@@ -81,6 +85,12 @@
                 <div class="result-text">No violations detected</div>
             </div>
         </div>
+    </div>
+    <div class="separator" style="column-count: unset">
+        <div class="title">Email Creator</div>
+        <input type="text" id="email-address" placeholder="Email Address"/>
+        <textarea id="email-creator" placeholder="Type your email here..."></textarea>
+            <button id="send-email">Send Email</button>
     </div>
 </div>
 </body>
