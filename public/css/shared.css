@@ -55,17 +55,21 @@ body {
     padding-left: 3px;
 }
 .topic-container {
-    width: calc(100% - 42px);
-    margin: 20px;
-    display: inline-block;
-    box-shadow: 0px 1px 2px  #EEEEEE;
+    width: calc(100% - 40px);
+    margin: 0 20px;
+    display: block;
     background-color: #F9F9F9;
     vertical-align: top;
     position: relative;
+    -webkit-column-break-inside: avoid;
 }
-.topic-container:nth-child(odd) {
-    float: right;
+.topic-container:after {
+    content: '';
+    display: block;
+    height: 20px;
 }
+
+
 .topic-title {
     width: 100%;
     background-color: #EFEFEF;
@@ -134,12 +138,14 @@ body {
     background-color: #F9F9F9;
     padding: 0 5px;
 }
+
+
 .separator {
     box-shadow: 0px 1px 1px #EEEEEE;
     column-count: 2;
     column-gap: 0;
     width: 100%;
-    padding-top:30px;
+    padding-top:50px;
     position: relative;
 }
 .title {

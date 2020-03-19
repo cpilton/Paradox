@@ -3,8 +3,9 @@ const adsList = ['advert', 'advertisement','ads'];
 const adblockList = ['adblock', 'adblk'];
 const locationList = ['location'];
 const sessionList = ['session'];
-const fingerprintList = ['analytic', 'fingerprint', 'browserwidth', 'browserheight', 'screenwidth', 'screenheight', 'wd=', 'user'];
+const fingerprintList = ['analytic', 'fingerprint', 'browserwidth', 'browserheight', 'screenwidth', 'screenheight', 'wd='];
 var violations = 0, violationJustification = [];
+var host = '';
 
 $(document).ready(function () {
     $('#version').text('Version: ' + chrome.runtime.getManifest().version);
@@ -14,13 +15,30 @@ $(document).ready(function () {
             parseReponse(response.data);
             $('#url').text(response.data.url);
             $('#report-date').text(new Date().toLocaleString());
+            host = response.data.url;
         }
     );
 });
 
+chrome.runtime.onMessage.addListener(
+    function (request, sender, sendResponse) {
+        if (request.msg === "data_update" && request.data.url === host) {
+            parseReponse(request.data);
+        }
+    }
+);
+
+function resetViolations() {
+    $('#violations .tracker').remove();
+    violations = 0;
+    violationJustification = [];
+    $('#violations').append('<div class="tracker" id="no-violations"><div class="result-icon tick"></div><div class="result-text">No violations detected</div></div>');
+}
 
 function parseReponse(data) {
     if (data !== undefined) {
+        resetViolations();
+
         if (data.cookies !== undefined) {
             performDataChecks('cookies', data.cookies);
         }
@@ -33,6 +51,9 @@ function parseReponse(data) {
         analyseResults();
         if (Object.entries(data.policy).length !== 0) {
             analysePolicy(data.policy);
+            if ($('#no-policy').length > 0) {
+                $('#no-policy').remove();
+            }
         } else {
             $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing. If you can\'t find a Privacy Policy on this website, consider using the "Report Violation" button.</span></div>');
             updateViolations('no privacy policy');
@@ -217,7 +238,9 @@ function analysePolicy(paradoxPolicy) {
         }
         paradoxPolicy.email = paradoxPolicy.email.filter(onlyUnique);
         $(paradoxPolicy.email).each(function () {
-            $('#email').append('<div class="tracker"><div class="result-icon email"></div><div class="result-text">' + this + '</div></div> ')
+            var shortEmail = this.split('@');
+            $('#email #'+shortEmail[0]).remove();
+            $('#email').append('<div class="tracker" id="'+shortEmail[0]+'"><div class="result-icon email"></div><div class="result-text">' + this + '</div></div> ')
         })
     }
     fullPolicyAnalysis(paradoxPolicy);
@@ -233,7 +256,9 @@ function updateViolations(justification) {
     if ($('#no-violations').length !== 0) {
         $('#no-violations').remove();
     }
-    $('#violations').append('<div class="tracker"><div class="result-icon warning"></div><div class="result-text">' + justification.replace(/^\w/, c => c.toUpperCase()) + '</div></div> ')
+    var shortJustification = justification.replace(/ /g, '');
+    $('#violations #'+shortJustification).remove();
+    $('#violations').append('<div class="tracker" id="'+shortJustification+'"><div class="result-icon warning"></div><div class="result-text">' + justification.replace(/^\w/, c => c.toUpperCase()) + '</div></div> ')
 }
 
 function fullTrackerAnalysis() {
@@ -249,12 +274,13 @@ function fullTrackerAnalysis() {
                     $(resultType[storageType]).each(function () {
                         if (this.value) {
                             $(this.matches).each(function () {
-                                var div = '<div class="tracker">';
+                                var div = '<div class="tracker" id="tracker-'+type+'-'+this.replace(/ /g, '')+'">';
                                 div += '<div class="result-icon warning"></div>';
                                 div += '<div class="result-text">The following was detected in ' + storageType + ': ' + this + '</div>';
                                 div += '</div>';
 
                                 $('#no-' + type).remove();
+                                $('#tracker-' + type + '-' + this.replace(/ /g, '')).remove();
                                 $('#' + type + '-full').append(div);
                             });
                         }
@@ -268,26 +294,24 @@ function fullTrackerAnalysis() {
 function fullPolicyAnalysis(policy) {
     for (var key in policy) {
         var type = key.toLowerCase();
-        if (policy[key].match) {
-            var responseType;
-            if($('#'+ type + ' .result-icon').hasClass('tick')) {
-                responseType = 'warning';
-            } else {
-                responseType = 'tick';
-            }
+        if (policy[key] !== null && policy[key].match) {
+            var responseType = $('#'+ type).attr('onupdate');
+
             $('#no-' + type).remove();
 
             $(policy[key].data).each(function() {
-                var div = '<div class="tracker">';
+                var div = '<div class="tracker" id="tracker-'+type+'-'+this.replace(/ /g, '')+'">';
                 div += '<div class="result-icon ' + responseType + '"></div>';
                 div += '<div class="result-text">The following was detected: ' + this + '</div>';
                 div += '</div>';
 
+                $('#tracker-' + type + '-' + this.replace(/ /g, '')).remove();
                 $('#' + type).append(div);
             });
         }
     }
 }
+
 function trackerTypes(data) {
     var storageTypes = ['cookies','cors','storage'];
     $(storageTypes).each(function() {
@@ -313,11 +337,13 @@ function trackerTypes(data) {
             text = 'local storage'
         }
 
-        var div = '<div class="tracker">';
+        var div = '<div class="tracker" id="'+this+'-tracker-content">';
         div += '<div class="result-icon ' + responseType + '"></div>';
         div += '<div class="result-text">The number of ' + text + ' trackers detected was: ' + length + '</div>';
         div += '</div>';
 
+
+        $('#' + this + '-tracker-content').remove();
         $('#' + this + '-tracker').append(div);
     });
 }

@@ -6,6 +6,7 @@ const sessionList = ['session'];
 const fingerprintList = ['analytic', 'fingerprint', 'browserwidth', 'browserheight', 'screenwidth', 'screenheight', 'wd='];
 var violations = 0, violationJustification = [];
 var paradoxData;
+var host = '';
 
 $(document).ready(function () {
     // ...query for the active tab...
@@ -36,12 +37,19 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-var host = '';
+function resetViolations() {
+    violations = 0;
+    violationJustification = [];
+    $('#report-violation').removeClass('with-icon');
+    $('#violation-count').css('visibility', 'hidden');
+}
 
 function parseReponse(data) {
     if (data !== undefined && (data.url == host || data.type == 'load' || (data.type == 'update' && host == '' && data.url !== undefined))) {
         host = data.url;
         $('#loading').remove();
+
+        resetViolations();
 
         if (data.cookies !== undefined) {
             performDataChecks('cookies', data.cookies);
