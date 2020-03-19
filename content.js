@@ -30,6 +30,9 @@ chrome.runtime.onMessage.addListener(
         if (request.from === 'background' && request.subject === 'homeRequest') {
             handleHomeRequest(request);
         }
+        if (request.from === 'popup' && request.subject === 'retry') {
+            getData();
+        }
     }
 );
 
@@ -38,6 +41,8 @@ getData();
 function getData() {
     cookies = getCookies();
     storage = getLocalStorage();
+
+    getPolicy(findPrivacyPolicy());
 
     updatePopup();
 }
@@ -107,8 +112,6 @@ function updatePopup() {
         }
     });
 }
-
-getPolicy(findPrivacyPolicy())
 
 const searchList = {
     cookies: ['use cookies', 'unique identifiers', 'cookies stored on your device', 'collect information about you via cookie', 'session cookies', 'persistent cookies', 'third-party cookies'],

@@ -1,7 +1,8 @@
 {
   "manifest_version": 2,
   "name": "Paradox",
-  "version": "0.1",
+  "version": "1.0.1",
+  "description": "Helping People make Privacy Decisions",
   "content_scripts": [
     {
       "matches": [

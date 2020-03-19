@@ -18,18 +18,20 @@ $(document).ready(function () {
             tabs[0].id,
             {from: 'popup', subject: 'getParadoxObject'},
             function updatePopup(response) {
-                parseReponse(response);
+                if (response !== undefined) {
+                    parseReponse(response);
+                } else {
+                    chrome.runtime.sendMessage({from: 'popup',subject:'retry'});
+                }
             });
     });
-
     $('#version').text('Version: ' + chrome.runtime.getManifest().version);
-
 });
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.msg === "data_update") {
-            parseReponse(request.data);
+                parseReponse(request.data);
         }
     }
 );
@@ -37,8 +39,9 @@ chrome.runtime.onMessage.addListener(
 var host = '';
 
 function parseReponse(data) {
-    if (data !== undefined && (data.url == host || data.type == 'load')) {
+    if (data !== undefined && (data.url == host || data.type == 'load' || (data.type == 'update' && host == '' && data.url !== undefined))) {
         host = data.url;
+        $('#loading').remove();
 
         if (data.cookies !== undefined) {
             performDataChecks('cookies', data.cookies);
@@ -49,12 +52,18 @@ function parseReponse(data) {
         if (data.cors !== undefined) {
             performDataChecks('cors', data.cors);
         }
+
         analyseResults();
+
         if (Object.entries(data.policy).length !== 0) {
             analysePolicy(data.policy);
+            if ($('#no-policy').length > 0) {
+                $('#no-policy').remove();
+            }
         } else {
             $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing. If you can\'t find a Privacy Policy on this website, consider using the "Report Violation" button.</span></div>');
             updateViolations('no policy');
+            $('#policy-loading').remove();
         }
         paradoxData = data;
     }
@@ -224,6 +233,7 @@ function analysePolicy(paradoxPolicy) {
 
         $('#tracking-icon').addClass('tick');
     }
+    $('#policy-loading').remove();
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -251,4 +261,3 @@ function updateViolations(justification) {
     $('#violation-count').css('visibility', 'visible');
     $('#violation-count').text(violations.toString());
 }
-
