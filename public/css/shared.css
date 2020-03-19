@@ -62,11 +62,17 @@ body {
     vertical-align: top;
     position: relative;
     -webkit-column-break-inside: avoid;
+    border-radius: 10px;
+    overflow: hidden;
 }
 .topic-container:after {
     content: '';
     display: block;
     height: 20px;
+}
+.topic-container .tracker:last-child {
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
 }
 
 
@@ -76,15 +82,20 @@ body {
     text-align: center;
     font-size: 14px;
     padding: 5px 0;
+    box-shadow: 0 1px 2px #BBB;
+    overflow: hidden;
 }
 .tracker {
-    box-shadow: 0px 1px 2px  #EEEEEE;
-    border: 1px solid #eee;
     width: calc(100% - 42px);
     vertical-align: 15px;
     font-size: 12px;
     position: relative;
     padding: 3px 10px 3px 30px;
+    border-left: 1px solid #DDD;
+    border-right: 1px solid #DDD;
+}
+.topic-container .tracker:last-child {
+    border-bottom: 1px solid #DDD;
 }
 .result-icon {
     position: absolute;
@@ -135,8 +146,17 @@ body {
     left: 0;
     width: calc(100% - 10px);
     height: calc(100% - 29px);
-    background-color: #F9F9F9;
+    background-color: #e53935;
     padding: 0 5px;
+    color: #fff;
+}
+#no-policy span {
+    position: absolute;
+    top:50%;
+    text-align: center;
+    width: 100%;
+    left:0;
+    transform: translateY(-50%);
 }
 
 
@@ -178,9 +198,9 @@ body {
     padding: 10px;
     height: 250px;
     resize: none;
-    box-shadow: 0px 1px 2px #ddd;
+    box-shadow: 0px 1px 1px #f5f5f5;
     border: 1px solid #eee;
-    border-radius: 20px;
+    border-radius: 10px;
     outline: none;
     transition: .2s;
 }
@@ -189,9 +209,9 @@ body {
 }
 #email-address {
     padding: 10px;
-    box-shadow: 0px 1px 2px #ddd;
+    box-shadow: 0px 1px 1px #f5f5f5;
     border: 1px solid #eee;
-    border-radius: 20px;
+    border-radius: 10px;
     outline: none;
     transition: .2s;
     margin: 0 50px 10px;

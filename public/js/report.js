@@ -55,8 +55,11 @@ function parseReponse(data) {
                 $('#no-policy').remove();
             }
         } else {
-            $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing. If you can\'t find a Privacy Policy on this website, consider using the "Report Violation" button.</span></div>');
-            updateViolations('no privacy policy');
+            if ($('#no-policy').length == 0) {
+                $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing.</span></div>');
+            }
+                updateViolations('no privacy policy');
+
         }
         trackerTypes(data);
         paradoxData = data;
@@ -274,13 +277,13 @@ function fullTrackerAnalysis() {
                     $(resultType[storageType]).each(function () {
                         if (this.value) {
                             $(this.matches).each(function () {
-                                var div = '<div class="tracker" id="tracker-'+type+'-'+this.replace(/ /g, '')+'">';
+                                var div = '<div class="tracker" id="tracker-'+type+'-'+this.replace(/ /g, '').replace(/[^\w\s]/gi, '')+'">';
                                 div += '<div class="result-icon warning"></div>';
                                 div += '<div class="result-text">The following was detected in ' + storageType + ': ' + this + '</div>';
                                 div += '</div>';
 
                                 $('#no-' + type).remove();
-                                $('#tracker-' + type + '-' + this.replace(/ /g, '')).remove();
+                                $('#tracker-' + type + '-' + this.replace(/ /g, '').replace(/[^\w\s]/gi, '')).remove();
                                 $('#' + type + '-full').append(div);
                             });
                         }

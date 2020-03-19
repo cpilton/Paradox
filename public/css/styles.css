@@ -9,7 +9,7 @@ body, html {
 #banner {
     width: 100%;
     height: 45px;
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.1);
     text-align: center;
     position: relative;
 }
@@ -82,20 +82,19 @@ body, html {
 }
 
 .topic-container {
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
     border: 1px solid #eee;
     background-color: #f9f9f9;
     border-radius: 10px;
     margin-bottom: 5px;
+    overflow: hidden;
 }
 
 .tracker {
     background-color: #fff;
     width: 100%;
     height: 30px;
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
     position: relative;
-    border: 1px solid #eee;
+    border-bottom: 1px solid #EEE;
 }
 
 .items {
@@ -108,11 +107,11 @@ body, html {
 }
 
 .items#track {
-    height: calc(32px * 5);
+    height: calc(31px * 5);
 }
 
 .items#policy {
-    height: calc(32px * 4);
+    height: calc(31px * 4);
 }
 
 .result-text {
@@ -131,7 +130,7 @@ body, html {
     text-align: center;
     background-color: #efefef;
     color: #333;
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.175);
 }
 
 .warning {
@@ -155,7 +154,7 @@ body, html {
     color: #444;
     font-size: 11px;
     width: calc(50% - 5px);
-    box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.1);
     border: none;
     border-radius: 10px;
     position: absolute;

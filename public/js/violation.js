@@ -55,7 +55,9 @@ function parseReponse(data) {
                 $('#no-policy').remove();
             }
         } else {
-            $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing. If you can\'t find a Privacy Policy on this website, consider using the "Report Violation" button.</span></div>');
+            if ($('#no-policy').length == 0) {
+                $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing.</span></div>');
+            }
             updateViolations('no privacy policy');
         }
         paradoxData = data;
