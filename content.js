@@ -40,6 +40,8 @@ getData();
 
 function getData() {
     cookies = getCookies();
+    cookies = cookies.filter(Boolean);
+
     storage = getLocalStorage();
 
     getPolicy(findPrivacyPolicy());

@@ -144,14 +144,14 @@ function analysePolicy(paradoxPolicy) {
     } else {
         $('#data-collection-text').text('Your personal information will not be collected');
         $('#data-collection-icon').addClass('tick');
-
-        if (result.location.cookies || result.location.cors || result.location.storage) {
+    console.log(result);
+        if (result.location.cookies.value || result.location.cors.value || result.location.storage.value) {
             const justification = 'location tracking despite claiming no personal information will be collected';
             if (!violationJustification.includes(justification)) {
                 updateViolations(justification);
             }
         }
-        if (result.fingerprint.cookies || result.fingerprint.cors || result.fingerprint.storage) {
+        if (result.fingerprint.cookies.value || result.fingerprint.cors.value || result.fingerprint.storage.value) {
             const justification = 'fingerprint tracking despite claiming no personal information will be collected';
             if (!violationJustification.includes(justification)) {
                 updateViolations(justification);

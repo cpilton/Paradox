@@ -100,31 +100,31 @@ function analyseResults() {
         }
     });
 
-    if (result.session.cookies || result.session.cors || result.session.storage) {
+    if (result.session.cookies.value || result.session.cors.value || result.session.storage.value) {
         $('#session-text').text('Session data is being used to recognise your device');
     } else {
         $('#session-text').text('Session data is not being collected');
     }
 
-    if (result.ads.cookies || result.ads.cors || result.ads.storage) {
+    if (result.ads.cookies.value || result.ads.cors.value || result.ads.storage.value) {
         $('#ads-text').text('Websites you visit are being logged to personalise your ads');
     } else {
         $('#ads-text').text('The websites you visit are not being logged for advertising');
     }
 
-    if (result.adblock.cookies || result.adblock.cors || result.adblock.storage) {
+    if (result.adblock.cookies.value || result.adblock.cors.value || result.adblock.storage.value) {
         $('#adblock-text').text('Ad-block detection may be used to show you ads');
     } else {
         $('#adblock-text').text('Ad-block detection is not in use');
     }
 
-    if (result.location.cookies || result.location.cors || result.location.storage) {
+    if (result.location.cookies.value || result.location.cors.value || result.location.storage.value) {
         $('#location-text').text('Your location is being tracked');
     } else {
         $('#location-text').text('Your location is not being tracked');
     }
 
-    if (result.fingerprint.cookies || result.fingerprint.cors || result.fingerprint.storage) {
+    if (result.fingerprint.cookies.value || result.fingerprint.cors.value || result.fingerprint.storage.value) {
         $('#fingerprint-text').text('Fingerprinting is being used to recognise your device');
     } else {
         $('#fingerprint-text').text('Fingerprinting is not being used');
@@ -139,13 +139,13 @@ function analysePolicy(paradoxPolicy) {
         $('#data-collection-text').text('Your personal information will not be collected');
         $('#data-collection-icon').addClass('tick');
 
-        if (result.location.cookies || result.location.cors || result.location.storage) {
+        if (result.location.cookies.value || result.location.cors.value || result.location.storage.value) {
             const justification = 'location tracking despite claiming no personal information will be collected';
             if (!violationJustification.includes(justification)) {
                 updateViolations(justification);
             }
         }
-        if (result.fingerprint.cookies || result.fingerprint.cors || result.fingerprint.storage) {
+        if (result.fingerprint.cookies.value || result.fingerprint.cors.value || result.fingerprint.storage.value) {
             const justification = 'fingerprint tracking despite claiming no personal information will be collected';
             if (!violationJustification.includes(justification)) {
                 updateViolations(justification);
