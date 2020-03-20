@@ -38,6 +38,7 @@ function resetViolations() {
 function parseReponse(data) {
     if (data !== undefined) {
         resetViolations();
+        paradoxData = data;
 
         if (data.cookies !== undefined) {
             performDataChecks('cookies', data.cookies);
@@ -60,7 +61,6 @@ function parseReponse(data) {
             }
             updateViolations('no privacy policy');
         }
-        paradoxData = data;
     }
 }
 
@@ -213,13 +213,13 @@ function analysePolicy(paradoxPolicy) {
     } else {
         $('#tracking-text').text('This website doesn\'t track your usage, or personalise ads');
 
-        if (result.session.cookies || result.session.cors || result.session.storage) {
+        if (paradoxData.cookies.length > 0) {
             const justification = 'cookies used but not declared in privacy policy';
             if (!violationJustification.includes(justification)) {
                 updateViolations(justification);
             }
         }
-        if (result.fingerprint.cookies || result.fingerprint.cors || result.fingerprint.storage) {
+        if (result.ads.cookies.value || result.ads.cors.value || result.ads.storage.value) {
             const justification = 'analytics used but not declared in privacy policy';
             if (!violationJustification.includes(justification)) {
                 updateViolations(justification);
