@@ -4,11 +4,13 @@ let storage;
 let policyResult = {};
 const s = document.createElement('script');
 var homeRequestAttempted = false;
+var reqCount = 0;
 
 //Read Chrome Messages
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.subject === 'getParadoxObject') {
+            reqCount++;
             var paradoxObject = {
                 url: window.location.hostname,
                 cookies: cookies,
@@ -16,6 +18,7 @@ chrome.runtime.onMessage.addListener(
                 cors: cors,
                 policy: policyResult,
                 type: 'load',
+                requests: reqCount
             };
             sendResponse(paradoxObject);
             chrome.runtime.sendMessage({

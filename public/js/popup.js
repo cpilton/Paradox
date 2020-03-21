@@ -22,7 +22,7 @@ $(document).ready(function () {
                 if (response !== undefined) {
                     parseReponse(response);
                 } else {
-                    chrome.runtime.sendMessage({from: 'popup',subject:'retry'});
+                    chrome.runtime.sendMessage({from: 'popup', subject: 'retry'});
                 }
             });
     });
@@ -32,7 +32,7 @@ $(document).ready(function () {
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.msg === "data_update") {
-                parseReponse(request.data);
+            parseReponse(request.data);
         }
     }
 );
@@ -66,15 +66,26 @@ function parseReponse(data) {
 
         if (Object.entries(data.policy).length !== 0) {
             analysePolicy(data.policy);
+            clearTimeout(policyTimeout);
             if ($('#no-policy').length > 0) {
                 $('#no-policy').remove();
             }
         } else {
-            $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing. If you can\'t find a Privacy Policy on this website, consider using the "Report Violation" button.</span></div>');
-            updateViolations('no policy');
-            $('#policy-loading').remove();
+            if (data.requests !== undefined && data.requests == 1) {
+                policyTimeout = setTimeout(showNoPolicy, 2000);
+            } else {
+                showNoPolicy();
+            }
         }
     }
+}
+
+var policyTimeout;
+
+function showNoPolicy() {
+    $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing. If you can\'t find a Privacy Policy on this website, consider using the "Report Violation" button.</span></div>');
+    updateViolations('no policy');
+    $('#policy-loading').remove();
 }
 
 function performDataChecks(type, data) {
@@ -254,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function reportViolation() {
-        chrome.runtime.sendMessage({from: 'popup',subject:'openTab',tab:'public/violation.html'});
+    chrome.runtime.sendMessage({from: 'popup', subject: 'openTab', tab: 'public/violation.html'});
 };
 
 function fullReport() {
