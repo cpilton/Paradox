@@ -215,7 +215,7 @@ body, html {
     line-height: 15px;
     visibility: hidden;
 }
-#loading {
+#loading, #welcome {
     position: absolute;
     background-color: #f9f9f9;
     top: 45px;
@@ -233,7 +233,7 @@ body, html {
     height: 100%;
     background-color: #f9f9f9;
 }
-.loader {
+.loader, #welcome-img {
     background-repeat: no-repeat;
     background-position: center;
     background-size: 65%;
@@ -245,6 +245,12 @@ body, html {
     display: block;
     margin: auto;
     animation:spin 2s linear infinite;
+}
+#welcome-img {
+    width: 80px;
+    height:80px;
+    background-image: url("../img/welcome.svg");
+    animation: none;
 }
 #load-centre {
     position: absolute;

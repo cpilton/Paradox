@@ -7,26 +7,35 @@ const fingerprintList = ['analytic', 'fingerprint', 'browserwidth', 'browserheig
 var violations = 0, violationJustification = [];
 var paradoxData;
 var host = '';
-
+var href;
 $(document).ready(function () {
-    // ...query for the active tab...
-    chrome.tabs.query({
-        active: true,
-        currentWindow: true
-    }, tabs => {
-        // ...and send a request for the DOM info...
-        chrome.tabs.sendMessage(
-            tabs[0].id,
-            {from: 'popup', subject: 'getParadoxObject'},
-            function updatePopup(response) {
-                if (response !== undefined) {
-                    parseReponse(response);
-                } else {
-                    chrome.runtime.sendMessage({from: 'popup', subject: 'retry'});
-                }
+    chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
+        href = tabs[0].url;
+        $('#version').text('Version: ' + chrome.runtime.getManifest().version);
+        
+        if (href.indexOf('chrome://extensions') !== -1 || href.indexOf('chrome.google.com/webstore') !== -1) {
+            $('#loading').remove();
+            $('#container').append('<div id="welcome"><div id="load-centre"><span>Welcome to Paradox!</span><div id="welcome-img"></div><span>Load up a webpage to get started</span></div></div>')
+        } else {
+            // ...query for the active tab...
+            chrome.tabs.query({
+                active: true,
+                currentWindow: true
+            }, tabs => {
+                // ...and send a request for the DOM info...
+                chrome.tabs.sendMessage(
+                    tabs[0].id,
+                    {from: 'popup', subject: 'getParadoxObject'},
+                    function updatePopup(response) {
+                        if (response !== undefined) {
+                            parseReponse(response);
+                        } else {
+                            chrome.runtime.sendMessage({from: 'popup', subject: 'retry'});
+                        }
+                    });
             });
+        }
     });
-    $('#version').text('Version: ' + chrome.runtime.getManifest().version);
 });
 
 chrome.runtime.onMessage.addListener(

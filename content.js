@@ -26,6 +26,7 @@ chrome.runtime.onMessage.addListener(
                 subject: 'initialData',
                 data: paradoxObject
             });
+            getPolicy(findPrivacyPolicy());
         }
         if (request.from === 'background' && request.subject === 'corsRequest') {
             handleCORSResponse(request);
