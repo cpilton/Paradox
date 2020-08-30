@@ -1,11 +1,12 @@
-var result = {ads: {}, adblock: {}, trackers: {}, location: {}, fingerprint: {}, session: {}};
+let result = {ads: {}, adblock: {}, trackers: {}, location: {}, fingerprint: {}, session: {}};
 const adsList = ['advert', 'advertisement'];
 const adblockList = ['adblock', 'adblk'];
 const locationList = ['location'];
 const sessionList = ['session'];
 const fingerprintList = ['analytic', 'fingerprint', 'browserwidth', 'browserheight', 'screenwidth', 'screenheight', 'wd='];
-var violations = 0, violationJustification = [];
+let violations = 0, violationJustification = [];
 
+let host;
 $(document).ready(function () {
     $('#version').text('Version: ' + chrome.runtime.getManifest().version);
     chrome.runtime.sendMessage({from: 'violation', subject: 'getParadoxData'},
@@ -22,11 +23,13 @@ chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.msg === "data_update" && request.data.url === host) {
             parseReponse(request.data);
+            sendResponse({success: true});
         }
+        return true;
     }
 );
 
-var host = '';
+host = '';
 
 function resetViolations() {
     $('#violations .tracker').remove();
@@ -52,11 +55,12 @@ function parseReponse(data) {
         analyseResults();
         if (Object.entries(data.policy).length !== 0) {
             analysePolicy(data.policy);
-            if ($('#no-policy').length > 0) {
-                $('#no-policy').remove();
+            let noPolicy = $('#no-policy');
+            if (noPolicy.length > 0) {
+                noPolicy.remove();
             }
         } else {
-            if ($('#no-policy').length == 0) {
+            if ($('#no-policy').length === 0) {
                 $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing.</span></div>');
             }
             updateViolations('no privacy policy');
@@ -74,26 +78,22 @@ function performDataChecks(type, data) {
 
 function checkForMatch(data, wordList) {
     const dataString = data.toString();
-    var count = 0;
+    let count = 0;
 
     $(wordList).each(function () {
-        if (dataString.search(this) != -1) {
+        if (dataString.search(this) !== -1) {
             count++;
         }
     });
 
-    if (count == 0) {
-        return false;
-    } else {
-        return true;
-    }
+    return count !== 0;
 }
 
 function analyseResults() {
-    var types = ['ads', 'adblock', 'location', 'fingerprint', 'session'];
+    const types = ['ads', 'adblock', 'location', 'fingerprint', 'session'];
 
     $(types).each(function () {
-        if (result[this].cookies == true || result[this].cors == true || result[this].storage == true) {
+        if (result[this].cookies || result[this].cors || result[this].storage) {
             $('#' + this + '-icon').css('background-color', '#FB8C00');
         } else {
             $('#' + this + '-icon').css('background-color', '#43A047');
@@ -232,14 +232,15 @@ function analysePolicy(paradoxPolicy) {
     }
 
     if (paradoxPolicy.email !== null && paradoxPolicy.email.length !== 0) {
-        if ($('#no-email').length !== 0) {
-            $('#no-email').remove();
+        let noEmail = $('#no-email');
+        if (noEmail.length !== 0) {
+            noEmail.remove();
         }
         paradoxPolicy.email = paradoxPolicy.email.filter(onlyUnique);
         $(paradoxPolicy.email).each(function () {
-            var shortEmail = this.split('@');
-            $('#email #'+shortEmail[0]).remove();
-            $('#email').append('<div class="tracker" id="'+shortEmail[0]+'"><div class="result-icon email"></div><div class="result-text">' + this + '</div></div> ')
+            const shortEmail = this.split('@');
+            $('#email #' + shortEmail[0]).remove();
+            $('#email').append('<div class="tracker" id="' + shortEmail[0] + '"><div class="result-icon email"></div><div class="result-text">' + this + '</div></div> ')
         })
     }
 }
@@ -251,19 +252,20 @@ function onlyUnique(value, index, self) {
 function updateViolations(justification) {
     violations++;
     violationJustification.push(justification);
-    if ($('#no-violations').length !== 0) {
-        $('#no-violations').remove();
+    let noViolations = $('#no-violations');
+    if (noViolations.length !== 0) {
+        noViolations.remove();
     }
-    var shortJustification = justification.replace(/ /g, '');
-    $('#violations #'+shortJustification).remove();
-    $('#violations').append('<div class="tracker" id="'+shortJustification+'"><div class="result-icon warning"></div><div class="result-text">' + justification.replace(/^\w/, c => c.toUpperCase()) + '</div></div> ')
+    const shortJustification = justification.replace(/ /g, '');
+    $('#violations #' + shortJustification).remove();
+    $('#violations').append('<div class="tracker" id="' + shortJustification + '"><div class="result-icon warning"></div><div class="result-text">' + justification.replace(/^\w/, c => c.toUpperCase()) + '</div></div> ')
 }
 
-$(document).ready(function() {
-    $('#send-email').click(function() {
-        var address = $('#email-address').val();
-        var body = $('#email-creator').val();
-        var subject = 'Potential Privacy Violation';
-        window.open("mailto:"+address+"?subject="+subject+"&body="+body);
+$(document).ready(function () {
+    $('#send-email').click(function () {
+        const address = $('#email-address').val();
+        const body = $('#email-creator').val();
+        const subject = 'Potential Privacy Violation';
+        window.open("mailto:" + address + "?subject=" + subject + "&body=" + body);
     });
 });

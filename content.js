@@ -1,17 +1,17 @@
-var cors = [];
+let cors = [];
 let cookies;
 let storage;
 let policyResult = {};
 const s = document.createElement('script');
-var homeRequestAttempted = false;
-var reqCount = 0;
+let homeRequestAttempted = false;
+let reqCount = 0;
 
 //Read Chrome Messages
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.subject === 'getParadoxObject') {
             reqCount++;
-            var paradoxObject = {
+            const paradoxObject = {
                 url: window.location.hostname,
                 cookies: cookies,
                 storage: storage,
@@ -22,21 +22,26 @@ chrome.runtime.onMessage.addListener(
             };
             sendResponse(paradoxObject);
             chrome.runtime.sendMessage({
-                from: 'content',
-                subject: 'initialData',
-                data: paradoxObject
-            });
-            getPolicy(findPrivacyPolicy());
-        }
-        if (request.from === 'background' && request.subject === 'corsRequest') {
+                    from: 'content',
+                    subject: 'initialData',
+                    data: paradoxObject
+                },
+                function (response) {
+                    if (response.success) {
+                        getPolicy(findPrivacyPolicy());
+                    }
+                });
+        } else if (request.from === 'background' && request.subject === 'corsRequest') {
+            sendResponse({success: true});
             handleCORSResponse(request);
-        }
-        if (request.from === 'background' && request.subject === 'homeRequest') {
+        } else if (request.from === 'background' && request.subject === 'homeRequest') {
+            sendResponse({success: true});
             handleHomeRequest(request);
-        }
-        if (request.from === 'popup' && request.subject === 'retry') {
+        } else if (request.from === 'popup' && request.subject === 'retry') {
+            sendResponse({success: true});
             getData();
         }
+        return true;
     }
 );
 
@@ -45,7 +50,6 @@ getData();
 function getData() {
     cookies = getCookies();
     cookies = cookies.filter(Boolean);
-
     storage = getLocalStorage();
 
     getPolicy(findPrivacyPolicy());
@@ -54,7 +58,7 @@ function getData() {
 }
 
 window.addEventListener("message", function (message) {
-    if (message.data.from == 'paradox' && message.data.type == 'policyRequest') {
+    if (message.data.from === 'paradox' && message.data.type === 'policyRequest') {
         window.postMessage({
             from: 'content',
             type: 'paradoxPolicy',
@@ -63,9 +67,8 @@ window.addEventListener("message", function (message) {
             tickImg: chrome.extension.getURL("/public/img/tick.svg"),
             warningImg: chrome.extension.getURL("/public/img/warning.svg")
         }, "*");
-    }
-    if (message.data.from == 'paradox' && message.data.type == 'corsInterception') {
-        addCors(message.data.data)
+    } else if (message.data.from === 'paradox' && message.data.type === 'corsInterception') {
+        addCors(message.data.data);
     }
 });
 
@@ -79,7 +82,7 @@ function injectScript() {
 }
 
 function addCors(data) {
-    if (cors.indexOf(data) == -1) {
+    if (cors.indexOf(data) === -1) {
         cors.push(data);
     }
     updatePopup();
@@ -140,7 +143,7 @@ const searchList = {
 //Format the policy
 function parsePolicy(policy) {
     //Regex for scripts, images, comments, and blank lines
-    var regex = [/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, /(<!--.*?-->)|(<!--[\S\s]+?-->)|(<!--[\S\s]*?$)/g, /^\s*$(?:\r\n?|\n)/gm];
+    const regex = [/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, /(<!--.*?-->)|(<!--[\S\s]+?-->)|(<!--[\S\s]*?$)/g, /^\s*$(?:\r\n?|\n)/gm];
 
     //Remove unwanted text
     $(regex).each(function () {
@@ -152,10 +155,10 @@ function parsePolicy(policy) {
     //Convert to lowercase for comparison
     policy = policy.toLowerCase();
 
-    var searchTerms = [];
+    const searchTerms = [];
 
     //Loop through searchList keys to create key-set
-    for (var key in searchList) {
+    for (const key in searchList) {
         if (searchList.hasOwnProperty(key)) {
             searchTerms.push(key);
         }
@@ -175,9 +178,7 @@ function parsePolicy(policy) {
 
 //Find a link to the privacy policy on the website
 function findPrivacyPolicy() {
-    var url;
-
-    var multipleURLs = false;
+    let url, multipleURLs = false;
 
     $('a').each(function () {
         if ($(this).attr('href') !== undefined && $(this).attr('href').toLowerCase().indexOf('privacy') !== -1 && $(this).text().toLowerCase().indexOf('privacy') !== -1) {
@@ -194,21 +195,17 @@ function findPrivacyPolicy() {
         }
     });
 
-    if (url !== undefined) {
+    if (url) {
         return createReachableURL(url);
     }
 }
 
 function findRemotePrivacyPolicy(webpage) {
-    var html = $.parseHTML(webpage);
-
-    var url;
-
-    var multipleURLs = false;
+    const html = $.parseHTML(webpage);
+    let url, multipleURLs = false;
 
     $(html).find('a').each(function () {
         if ($(this).attr('href') !== undefined && $(this).attr('href').toLowerCase().indexOf('privacy') !== -1 && $(this).text().toLowerCase().indexOf('privacy') !== -1) {
-            console.log($(this).attr('href'));
             if (!multipleURLs) {
                 url = $(this).attr('href');
                 multipleURLs = true;
@@ -222,7 +219,7 @@ function findRemotePrivacyPolicy(webpage) {
         }
     });
 
-    if (url !== undefined) {
+    if (url) {
         return createReachableURL(url);
     }
 
@@ -231,11 +228,11 @@ function findRemotePrivacyPolicy(webpage) {
 function createReachableURL(url) {
     if (url.indexOf('http://') === -1 && url.indexOf('https://') === -1) {
 
-        while (url.indexOf('/') == 0) {
+        while (url.indexOf('/') === 0) {
             url = url.substring(1);
         }
 
-        if (url.indexOf('.') == -1 || (url.indexOf('.') > url.indexOf('/'))) {
+        if (url.indexOf('.') === -1 || (url.indexOf('.') > url.indexOf('/'))) {
             url = window.location.hostname + '/' + url;
         }
 
@@ -257,7 +254,7 @@ function handleHomeRequest(response) {
     if (response.status === 'success') {
 
         //Regex for scripts, images, comments, and blank lines
-        var regex = [/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, /(<!--.*?-->)|(<!--[\S\s]+?-->)|(<!--[\S\s]*?$)/g, /^\s*$(?:\r\n?|\n)/gm];
+        const regex = [/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, /(<!--.*?-->)|(<!--[\S\s]+?-->)|(<!--[\S\s]*?$)/g, /^\s*$(?:\r\n?|\n)/gm];
 
         //Remove unwanted text
         $(regex).each(function () {
@@ -268,7 +265,6 @@ function handleHomeRequest(response) {
 
         getPolicy(findRemotePrivacyPolicy(response.data));
     } else if (response.status === 'failed') {
-        console.log('Paradox failed to get the website root. Error: ' + response.data);
         injectScript();
     }
 }
@@ -278,14 +274,15 @@ function makeCORSRequest(link) {
         from: 'content',
         subject: 'CORSrequest',
         link: link
-    });
+    }), function (response) {
+    };
 }
 
 function handleCORSResponse(response) {
     if (response.status === 'success') {
         parsePolicy(response.data);
     } else if (response.status === 'failed') {
-        console.log('Paradox failed to get the Privacy Policy. Error: ' + response.data);
+        console.log('[Paradox] Failed to get the Privacy Policy. Error: ' + response.data);
         injectScript();
     }
 }
@@ -293,15 +290,13 @@ function handleCORSResponse(response) {
 //Get the policy as a string
 function getPolicy(link) {
     if (link !== undefined) {
-        console.log('Paradox is loading the Privacy Policy from: ' + link);
         makeCORSRequest(link);
     } else {
         if (!homeRequestAttempted) {
             homeRequestAttempted = true;
-            console.log('Paradox failed to find a Privacy Policy on this page, requesting website root: https://' + window.location.hostname);
             requestHomePage();
         } else {
-            console.log('Paradox failed to find a Privacy Policy for this website on this page, or the website root. It probably doesn\'t have one');
+            console.log('[Paradox] Failed to find a Privacy Policy for this website. It probably doesn\'t have one');
             injectScript();
         }
     }
@@ -309,18 +304,18 @@ function getPolicy(link) {
 
 //Check the privacy policy for pre-defined strings
 function checkForMatch(dataString, wordList) {
-    var count = 0;
-    var matches = [];
+    let count = 0;
+    const matches = [];
 
     //Check the policy for a string, and if found increase counter and push string to matches
     $(wordList).each(function () {
-        if (dataString.search(this.toLowerCase()) != -1) {
+        if (dataString.search(this.toLowerCase()) !== -1) {
             matches.push(this);
             count++;
         }
     });
 
-    if (count == 0) {
+    if (count === 0) {
         return {match: false};
     } else {
         return {match: true, data: matches};

@@ -1,19 +1,19 @@
-var result = {ads: {}, adblock: {}, trackers: {}, location: {}, fingerprint: {}, session: {}};
+let result = {ads: {}, adblock: {}, trackers: {}, location: {}, fingerprint: {}, session: {}};
 const adsList = ['advert', 'advertisement'];
 const adblockList = ['adblock', 'adblk'];
 const locationList = ['location'];
 const sessionList = ['session'];
 const fingerprintList = ['analytic', 'fingerprint', 'browserwidth', 'browserheight', 'screenwidth', 'screenheight', 'wd='];
-var violations = 0, violationJustification = [];
-var paradoxData;
-var host = '';
-var href;
+let violations = 0, violationJustification = [];
+let paradoxData;
+let host = '';
+let href;
 $(document).ready(function () {
     chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
         href = tabs[0].url;
         $('#version').text('Version: ' + chrome.runtime.getManifest().version);
-        
-        if ((href.indexOf('://') !== -1 && href.indexOf('http://') == -1 && href.indexOf('https://') == -1) || href.indexOf('chrome.google.com/webstore') !== -1) {
+
+        if ((href.indexOf('://') !== -1 && href.indexOf('http://') === -1 && href.indexOf('https://') === -1) || href.indexOf('chrome.google.com/webstore') !== -1) {
             $('#loading').remove();
             $('#container').append('<div id="welcome"><div id="load-centre"><span>Welcome to Paradox!</span><div id="welcome-img"></div><span>Load up a webpage to get started</span></div></div>')
         } else {
@@ -26,11 +26,11 @@ $(document).ready(function () {
                 chrome.tabs.sendMessage(
                     tabs[0].id,
                     {from: 'popup', subject: 'getParadoxObject'},
-                    function updatePopup(response) {
+                    function (response) {
                         if (response !== undefined) {
                             parseReponse(response);
                         } else {
-                            chrome.runtime.sendMessage({from: 'popup', subject: 'retry'});
+                            chrome.runtime.sendMessage({from: 'popup', subject: 'retry'})
                         }
                     });
             });
@@ -42,7 +42,9 @@ chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.msg === "data_update") {
             parseReponse(request.data);
+            sendResponse({success: true});
         }
+        return true;
     }
 );
 
@@ -53,8 +55,10 @@ function resetViolations() {
     $('#violation-count').css('visibility', 'hidden');
 }
 
+let policyTimeout;
+
 function parseReponse(data) {
-    if (data !== undefined && (data.url == host || data.type == 'load' || (data.type == 'update' && host == '' && data.url !== undefined))) {
+    if (data !== undefined && (data.url === host || data.type === 'load' || (data.type === 'update' && host === '' && data.url !== undefined))) {
         host = data.url;
         $('#loading').remove();
         paradoxData = data;
@@ -76,11 +80,12 @@ function parseReponse(data) {
         if (Object.entries(data.policy).length !== 0) {
             analysePolicy(data.policy);
             clearTimeout(policyTimeout);
-            if ($('#no-policy').length > 0) {
-                $('#no-policy').remove();
+            let noPolicy = $('#no-policy');
+            if (noPolicy.length > 0) {
+                noPolicy.remove();
             }
         } else {
-            if (data.requests !== undefined && data.requests == 1) {
+            if (data.requests !== undefined && data.requests === 1) {
                 policyTimeout = setTimeout(showNoPolicy, 2000);
             } else {
                 showNoPolicy();
@@ -89,7 +94,6 @@ function parseReponse(data) {
     }
 }
 
-var policyTimeout;
 
 function showNoPolicy() {
     $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing. If you can\'t find a Privacy Policy on this website, consider using the "Report Violation" button.</span></div>');
@@ -107,26 +111,22 @@ function performDataChecks(type, data) {
 
 function checkForMatch(data, wordList) {
     const dataString = data.toString();
-    var count = 0;
+    let count = 0;
 
     $(wordList).each(function () {
-        if (dataString.search(this) != -1) {
+        if (dataString.search(this) !== -1) {
             count++;
         }
     });
 
-    if (count == 0) {
-        return false;
-    } else {
-        return true;
-    }
+    return count !== 0;
 }
 
 function analyseResults() {
-    var types = ['ads', 'adblock', 'location', 'fingerprint', 'session'];
+    const types = ['ads', 'adblock', 'location', 'fingerprint', 'session'];
 
     $(types).each(function () {
-        if (result[this].cookies == true || result[this].cors == true || result[this].storage == true) {
+        if (result[this].cookies || result[this].cors || result[this].storage) {
             $('#' + this + '-icon').css('background-color', '#FB8C00');
         } else {
             $('#' + this + '-icon').css('background-color', '#43A047');
@@ -275,17 +275,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function reportViolation() {
     chrome.runtime.sendMessage({from: 'popup', subject: 'openTab', tab: 'public/violation.html'});
-};
+}
 
 function fullReport() {
     chrome.tabs.create({'url': 'public/report.html'});
-};
+}
 
 function updateViolations(justification) {
     violations++;
     violationJustification.push(justification);
 
     $('#report-violation').addClass('with-icon');
-    $('#violation-count').css('visibility', 'visible');
-    $('#violation-count').text(violations.toString());
+    let violationCount = $('#violation-count');
+    violationCount.css('visibility', 'visible');
+    violationCount.text(violations.toString());
 }

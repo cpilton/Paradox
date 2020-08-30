@@ -1,11 +1,11 @@
-var result = {ads: {}, adblock: {}, trackers: {}, location: {}, fingerprint: {}, session: {}};
-const adsList = ['advert', 'advertisement','ads'];
+let result = {ads: {}, adblock: {}, trackers: {}, location: {}, fingerprint: {}, session: {}};
+const adsList = ['advert', 'advertisement', 'ads'];
 const adblockList = ['adblock', 'adblk'];
 const locationList = ['location'];
 const sessionList = ['session'];
 const fingerprintList = ['analytic', 'fingerprint', 'browserwidth', 'browserheight', 'screenwidth', 'screenheight', 'wd='];
-var violations = 0, violationJustification = [];
-var host = '';
+let violations = 0, violationJustification = [];
+let host = '';
 
 $(document).ready(function () {
     $('#version').text('Version: ' + chrome.runtime.getManifest().version);
@@ -24,7 +24,9 @@ chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         if (request.msg === "data_update" && request.data.url === host) {
             parseReponse(request.data);
+            sendResponse({success: true});
         }
+        return true;
     }
 );
 
@@ -52,14 +54,15 @@ function parseReponse(data) {
         analyseResults();
         if (Object.entries(data.policy).length !== 0) {
             analysePolicy(data.policy);
-            if ($('#no-policy').length > 0) {
-                $('#no-policy').remove();
+            let noPolicy = $('#no-policy');
+            if (noPolicy.length > 0) {
+                noPolicy.remove();
             }
         } else {
-            if ($('#no-policy').length == 0) {
+            if ($('#no-policy').length === 0) {
                 $('#policy').append('<div id="no-policy"><span>No Privacy Policy was found. Check for one before continuing.</span></div>');
             }
-                updateViolations('no privacy policy');
+            updateViolations('no privacy policy');
 
         }
         trackerTypes(data);
@@ -76,17 +79,17 @@ function performDataChecks(type, data) {
 
 function checkForMatch(data, wordList) {
     const dataString = data.toString();
-    var count = 0;
-    var matches = [];
+    let count = 0;
+    let matches = [];
 
     $(wordList).each(function () {
-        if (dataString.search(this) != -1) {
+        if (dataString.search(this) !== -1) {
             count++;
             matches.push(this);
         }
     });
 
-    if (count == 0) {
+    if (count === 0) {
         return {value: false};
     } else {
         return {value: true, matches: matches}
@@ -94,7 +97,7 @@ function checkForMatch(data, wordList) {
 }
 
 function analyseResults() {
-    var types = ['ads', 'adblock', 'location', 'fingerprint', 'session'];
+    const types = ['ads', 'adblock', 'location', 'fingerprint', 'session'];
 
     $(types).each(function () {
         if (result[this].cookies.value || result[this].cors.value || result[this].storage.value) {
@@ -144,7 +147,7 @@ function analysePolicy(paradoxPolicy) {
     } else {
         $('#data-collection-text').text('Your personal information will not be collected');
         $('#data-collection-icon').addClass('tick');
-    console.log(result);
+        console.log(result);
         if (result.location.cookies.value || result.location.cors.value || result.location.storage.value) {
             const justification = 'location tracking despite claiming no personal information will be collected';
             if (!violationJustification.includes(justification)) {
@@ -236,14 +239,15 @@ function analysePolicy(paradoxPolicy) {
     }
 
     if (paradoxPolicy.email !== null && paradoxPolicy.email.length !== 0) {
-        if ($('#no-email').length !== 0) {
-            $('#no-email').remove();
+        let noEmail = $('#no-email');
+        if (noEmail.length !== 0) {
+            noEmail.remove();
         }
         paradoxPolicy.email = paradoxPolicy.email.filter(onlyUnique);
         $(paradoxPolicy.email).each(function () {
-            var shortEmail = this.split('@');
-            $('#email #'+shortEmail[0]).remove();
-            $('#email').append('<div class="tracker" id="'+shortEmail[0]+'"><div class="result-icon email"></div><div class="result-text">' + this + '</div></div> ')
+            let shortEmail = this.split('@');
+            $('#email #' + shortEmail[0]).remove();
+            $('#email').append('<div class="tracker" id="' + shortEmail[0] + '"><div class="result-icon email"></div><div class="result-text">' + this + '</div></div> ')
         })
     }
     fullPolicyAnalysis(paradoxPolicy);
@@ -256,28 +260,29 @@ function onlyUnique(value, index, self) {
 function updateViolations(justification) {
     violations++;
     violationJustification.push(justification);
-    if ($('#no-violations').length !== 0) {
-        $('#no-violations').remove();
+    let noViolations = $('#no-violations');
+    if (noViolations.length !== 0) {
+        noViolations.remove();
     }
-    var shortJustification = justification.replace(/ /g, '');
-    $('#violations #'+shortJustification).remove();
-    $('#violations').append('<div class="tracker" id="'+shortJustification+'"><div class="result-icon warning"></div><div class="result-text">' + justification.replace(/^\w/, c => c.toUpperCase()) + '</div></div> ')
+    let shortJustification = justification.replace(/ /g, '');
+    $('#violations #' + shortJustification).remove();
+    $('#violations').append('<div class="tracker" id="' + shortJustification + '"><div class="result-icon warning"></div><div class="result-text">' + justification.replace(/^\w/, c => c.toUpperCase()) + '</div></div> ')
 }
 
 function fullTrackerAnalysis() {
-    var types = ['ads', 'adblock', 'location', 'fingerprint', 'session'];
-    var storageTypes = ['cookies','cors','storage'];
+    const types = ['ads', 'adblock', 'location', 'fingerprint', 'session'];
+    const storageTypes = ['cookies', 'cors', 'storage'];
     $(types).each(function () {
         if (result[this].cookies.value || result[this].cors.value || result[this].storage.value) {
-            var type = this;
+            const type = this;
             $(result[type]).each(function () {
-                var resultType = this;
-                $(storageTypes).each(function() {
-                    var storageType = this;
+                const resultType = this;
+                $(storageTypes).each(function () {
+                    const storageType = this;
                     $(resultType[storageType]).each(function () {
                         if (this.value) {
                             $(this.matches).each(function () {
-                                var div = '<div class="tracker" id="tracker-'+type+'-'+this.replace(/ /g, '').replace(/[^\w\s]/gi, '')+'">';
+                                let div = '<div class="tracker" id="tracker-' + type + '-' + this.replace(/ /g, '').replace(/[^\w\s]/gi, '') + '">';
                                 div += '<div class="result-icon warning"></div>';
                                 div += '<div class="result-text">The following was detected in ' + storageType + ': ' + this + '</div>';
                                 div += '</div>';
@@ -295,15 +300,15 @@ function fullTrackerAnalysis() {
 }
 
 function fullPolicyAnalysis(policy) {
-    for (var key in policy) {
-        var type = key.toLowerCase();
+    for (let key in policy) {
+        let type = key.toLowerCase();
         if (policy[key] !== null && policy[key].match) {
-            var responseType = $('#'+ type).attr('onupdate');
+            let responseType = $('#' + type).attr('onupdate');
 
             $('#no-' + type).remove();
 
-            $(policy[key].data).each(function() {
-                var div = '<div class="tracker" id="tracker-'+type+'-'+this.replace(/ /g, '')+'">';
+            $(policy[key].data).each(function () {
+                let div = '<div class="tracker" id="tracker-' + type + '-' + this.replace(/ /g, '') + '">';
                 div += '<div class="result-icon ' + responseType + '"></div>';
                 div += '<div class="result-text">The following was detected: ' + this + '</div>';
                 div += '</div>';
@@ -316,9 +321,9 @@ function fullPolicyAnalysis(policy) {
 }
 
 function trackerTypes(data) {
-    var storageTypes = ['cookies','cors','storage'];
-    $(storageTypes).each(function() {
-        var length, responseType, text;
+    const storageTypes = ['cookies', 'cors', 'storage'];
+    $(storageTypes).each(function () {
+        let length, responseType, text;
 
         if (data[this].length !== undefined) {
             length = data[this].length;
@@ -326,21 +331,21 @@ function trackerTypes(data) {
             length = Object.keys(data[this]).length;
         }
 
-        if(length > 0) {
+        if (length > 0) {
             responseType = 'warning';
         } else {
             responseType = 'tick';
         }
 
-        if (this == 'cookies') {
+        if (this === 'cookies') {
             text = 'cookie';
-        } else if (this == 'cors') {
+        } else if (this === 'cors') {
             text = 'GET/POST';
-        } else if (this == 'storage') {
+        } else if (this === 'storage') {
             text = 'local storage'
         }
 
-        var div = '<div class="tracker" id="'+this+'-tracker-content">';
+        let div = '<div class="tracker" id="' + this + '-tracker-content">';
         div += '<div class="result-icon ' + responseType + '"></div>';
         div += '<div class="result-text">The number of ' + text + ' trackers detected was: ' + length + '</div>';
         div += '</div>';
