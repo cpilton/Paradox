@@ -13,7 +13,7 @@ $(document).ready(function () {
         href = tabs[0].url;
         $('#version').text('Version: ' + chrome.runtime.getManifest().version);
         
-        if (href.indexOf('chrome://extensions') !== -1 || href.indexOf('chrome.google.com/webstore') !== -1) {
+        if ((href.indexOf('://') !== -1 && href.indexOf('http://') == -1 && href.indexOf('https://') == -1) || href.indexOf('chrome.google.com/webstore') !== -1) {
             $('#loading').remove();
             $('#container').append('<div id="welcome"><div id="load-centre"><span>Welcome to Paradox!</span><div id="welcome-img"></div><span>Load up a webpage to get started</span></div></div>')
         } else {
